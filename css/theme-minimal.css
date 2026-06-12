@@ -1,0 +1,66 @@
+        /* ========== MINIMAL MODE ========== */
+        .demo-app.theme-minimal .demo-sidebar {
+            border-right: 1px solid #e2e8f0 !important;
+            box-shadow: none;
+        }
+        .demo-app.theme-minimal .demo-nav-item {
+            border-radius: 6px;
+            transition: background 0.15s ease, color 0.15s ease;
+        }
+        .demo-app.theme-minimal .demo-nav-item.active {
+            background: #eff6ff !important;
+            color: #2563eb !important;
+            border-left: 3px solid #2563eb !important;
+            border-radius: 0 6px 6px 0;
+            padding-left: 8px;
+        }
+        .demo-app.theme-minimal .demo-nav-item.active i { color: #2563eb !important; }
+        .demo-app.theme-minimal .demo-btn-primary {
+            animation: none !important;
+            box-shadow: none !important;
+            background: #2563eb !important;
+            transition: background 0.18s ease, transform 0.15s ease, box-shadow 0.15s ease;
+        }
+        .demo-app.theme-minimal .demo-btn-primary:hover {
+            background: #1d4ed8 !important;
+            transform: translateY(-1px) !important;
+            box-shadow: 0 4px 12px rgba(37,99,235,0.3) !important;
+        }
+        .demo-app.theme-minimal .stat-card {
+            animation: none !important;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+            transition: box-shadow 0.18s ease, border-color 0.18s ease;
+        }
+        .demo-app.theme-minimal .stat-card::after { display: none !important; }
+        .demo-app.theme-minimal .stat-card:hover {
+            transform: none !important;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.09) !important;
+            border-color: #93c5fd !important;
+        }
+        .demo-app.theme-minimal .demo-topbar {
+            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+            animation: none !important;
+        }
+        .demo-app.theme-minimal .demo-logo-icon {
+            box-shadow: 0 2px 8px rgba(37,99,235,0.22);
+        }
+        .demo-app.theme-minimal .data-table tr:hover td {
+            background: #f8fafc;
+        }
+        .demo-app.theme-minimal .profile-card:hover {
+            transform: none !important;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.09);
+        }
+        .demo-app.theme-minimal .modal-overlay.active .modal {
+            animation: modalSlideMinIn 0.22s ease-out;
+        }
+        .demo-app.theme-minimal .modal-overlay.closing .modal {
+            animation: modalSlideMinOut 0.18s ease-in forwards;
+        }
+        .demo-app.theme-minimal .modal {
+            box-shadow: 0 10px 40px rgba(0,0,0,0.12);
+        }
+        .demo-app.theme-minimal .demo-btn-secondary {
+            transition: border-color 0.15s ease, color 0.15s ease;
+        }
+

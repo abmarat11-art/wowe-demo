@@ -1,0 +1,326 @@
+        /* ========== ENERGY THEME ========== */
+        .demo-app.theme-energy {
+            font-family: 'Playfair Display', serif !important;
+        }
+        .demo-app.theme-energy * {
+            font-family: 'Playfair Display', serif !important;
+        }
+        /* Cormorant Garant on headings/titles */
+        .demo-app.theme-energy h1,
+        .demo-app.theme-energy h2,
+        .demo-app.theme-energy h3,
+        .demo-app.theme-energy h4,
+        .demo-app.theme-energy .demo-page-title h1,
+        .demo-app.theme-energy .data-title,
+        .demo-app.theme-energy .demo-logo-text,
+        .demo-app.theme-energy .stat-value,
+        .demo-app.theme-energy .modal-title,
+        .demo-app.theme-energy .demo-nav-item span,
+        .demo-app.theme-energy .demo-page-subtitle {
+            font-family: 'Cormorant Garant', 'Playfair Display', serif !important;
+        }
+        .demo-app.theme-energy .demo-page-title h1 {
+            font-style: italic;
+            font-weight: 700;
+            font-size: 22px;
+            color: #7c2d00;
+        }
+        .demo-app.theme-energy .data-title {
+            font-style: italic;
+            font-size: 14px;
+        }
+        .demo-app.theme-energy .demo-main {
+            background: #fdf4e3;
+        }
+        /* Energy: sidebar hidden by default, slides in */
+        .demo-app.theme-energy .demo-sidebar {
+            background: linear-gradient(180deg, #1e0a00 0%, #3d1500 100%);
+            border-right: none;
+            box-shadow: 4px 0 32px rgba(0,0,0,0.5);
+            position: absolute;
+            left: 0; top: 0; bottom: 0;
+            z-index: 150;
+            transform: translateX(-100%);
+            transition: transform 0.38s cubic-bezier(0.34, 1.3, 0.64, 1);
+            display: flex !important;
+        }
+        .demo-app.theme-energy .demo-sidebar.open {
+            transform: translateX(0);
+        }
+        .demo-app.theme-energy .nav-backdrop.active {
+            display: block !important;
+        }
+        /* ВАЖНО: показать кнопку бургера в Energy */
+        .demo-app.theme-energy .nav-toggle-btn {
+            display: flex !important;
+            color: #f97316;
+            border-color: rgba(249,115,22,0.3);
+            background: rgba(249,115,22,0.06);
+        }
+        .demo-app.theme-energy .nav-toggle-btn:hover {
+            background: rgba(249,115,22,0.15);
+            border-color: rgba(249,115,22,0.6);
+            box-shadow: 0 0 14px rgba(249,115,22,0.3);
+        }
+        .demo-app.theme-energy .demo-logo-text {
+            color: #fef9f0;
+            font-style: italic;
+            font-size: 15px;
+            font-weight: 700;
+        }
+        .demo-app.theme-energy .demo-logo-icon {
+            background: linear-gradient(135deg, #f97316, #c2410c);
+            box-shadow: 0 0 18px rgba(249,115,22,0.6);
+        }
+        .demo-app.theme-energy .demo-nav-item {
+            color: rgba(254,240,210,0.7);
+            border-radius: 10px;
+            transition: all 0.22s cubic-bezier(0.34, 1.5, 0.64, 1);
+            transform-origin: left center;
+            font-style: italic;
+            padding: 10px 12px;
+        }
+        .demo-app.theme-energy .demo-nav-item:hover {
+            color: #fff7ed;
+            background: rgba(249,115,22,0.2);
+            transform: scaleX(1.09) translateX(8px);
+            padding-left: 18px;
+            box-shadow: 3px 0 16px rgba(249,115,22,0.3);
+        }
+        .demo-app.theme-energy .demo-nav-item.active {
+            background: rgba(249,115,22,0.28);
+            color: #fed7aa;
+            border-left: 3px solid #f97316;
+            box-shadow: 3px 0 20px rgba(249,115,22,0.35);
+        }
+        .demo-app.theme-energy .demo-nav-item.active i { color: #fb923c; }
+        .demo-app.theme-energy .demo-user-avatar {
+            background: linear-gradient(135deg, #f97316, #2ec4b6);
+        }
+        .demo-app.theme-energy .demo-user-name { color: #fef9f0; }
+        .demo-app.theme-energy .demo-user-role { color: rgba(254,249,240,0.5); }
+        .demo-app.theme-energy .demo-topbar {
+            background: rgba(253,244,227,0.97);
+            border-bottom: 2px solid rgba(249,115,22,0.2);
+            box-shadow: 0 2px 20px rgba(249,115,22,0.1);
+        }
+        .demo-app.theme-energy .demo-breadcrumb { color: #7c2d00; font-style: italic; }
+        .demo-app.theme-energy .demo-page-subtitle { color: #9a3412; font-style: italic; }
+        .demo-app.theme-energy .stat-card {
+            background: #ffffff;
+            border: 1px solid rgba(249,115,22,0.2);
+            box-shadow: 0 3px 16px rgba(249,115,22,0.09);
+        }
+        .demo-app.theme-energy .stat-card::after { display: none; }
+        .demo-app.theme-energy .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(249,115,22,0.2);
+            border-color: rgba(249,115,22,0.45);
+        }
+        .demo-app.theme-energy .stat-label { color: #92400e; font-style: italic; font-size: 11px; }
+        .demo-app.theme-energy .stat-value {
+            color: #7c2d00;
+            font-style: italic;
+            font-weight: 700;
+            font-size: 26px;
+        }
+        .demo-app.theme-energy .stat-change { color: #2ec4b6; }
+        .demo-app.theme-energy .stat-icon { background: rgba(249,115,22,0.15); color: #f97316; }
+        .demo-app.theme-energy .stat-icon.orange { background: rgba(249,115,22,0.2); color: #c2410c; }
+        .demo-app.theme-energy .stat-icon.green { background: rgba(46,196,182,0.15); color: #2ec4b6; }
+        .demo-app.theme-energy .data-card {
+            background: #ffffff;
+            border: 1px solid rgba(249,115,22,0.15);
+            box-shadow: 0 3px 16px rgba(249,115,22,0.07);
+        }
+        .demo-app.theme-energy .demo-btn {
+            line-height: 1.4;
+            padding: 9px 16px;
+        }
+        .demo-app.theme-energy .demo-btn-primary {
+            background: linear-gradient(135deg, #f97316, #c2410c);
+            color: white;
+            box-shadow: 0 4px 20px rgba(249,115,22,0.45);
+            border: none;
+            font-style: italic;
+            font-weight: 700;
+            font-size: 12px;
+        }
+        .demo-app.theme-energy .demo-btn-primary:hover {
+            background: linear-gradient(135deg, #fb923c, #ea580c);
+            box-shadow: 0 6px 28px rgba(249,115,22,0.6);
+            transform: translateY(-2px);
+        }
+        .demo-app.theme-energy .demo-btn-secondary {
+            border: 1.5px solid #2ec4b6;
+            color: #2ec4b6;
+            font-style: italic;
+            background: rgba(46,196,182,0.06);
+        }
+        .demo-app.theme-energy .demo-btn-secondary:hover {
+            background: rgba(46,196,182,0.12);
+            box-shadow: 0 0 14px rgba(46,196,182,0.3);
+        }
+        .demo-app.theme-energy .table-action:hover {
+            background: rgba(249,115,22,0.12);
+            color: #f97316;
+            border-color: rgba(249,115,22,0.3);
+        }
+        .demo-app.theme-energy .data-table tr:hover td {
+            background: rgba(249,115,22,0.04);
+        }
+        .demo-app.theme-energy .data-table th {
+            color: #92400e;
+            background: rgba(253,244,227,0.7);
+        }
+        .demo-app.theme-energy .modal {
+            background: #fdf4e3;
+            border: 1px solid rgba(249,115,22,0.25);
+            box-shadow: 0 20px 60px rgba(249,115,22,0.18), 0 4px 16px rgba(0,0,0,0.08);
+        }
+        .demo-app.theme-energy .modal-header {
+            background: rgba(249,115,22,0.06);
+            border-bottom: 1px solid rgba(249,115,22,0.18);
+        }
+        .demo-app.theme-energy .modal-title {
+            color: #7c2d00;
+            font-style: italic;
+        }
+        .demo-app.theme-energy .modal-overlay.active .modal {
+            animation: energyModalIn 0.42s cubic-bezier(0.34, 1.4, 0.64, 1) forwards;
+        }
+        .demo-app.theme-energy .modal-overlay.closing .modal {
+            animation: energyModalOut 0.25s ease-in forwards;
+        }
+        @keyframes energyModalIn {
+            from { opacity: 0; transform: scale(0.88) translateY(16px); }
+            to   { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        @keyframes energyModalOut {
+            from { opacity: 1; transform: scale(1); }
+            to   { opacity: 0; transform: scale(0.92) translateY(12px); }
+        }
+        .demo-app.theme-energy .filter-btn:hover {
+            border-color: rgba(249,115,22,0.5);
+            color: #f97316;
+        }
+        .demo-app.theme-energy .demo-nav-divider {
+            background: rgba(249,115,22,0.15);
+        }
+        .demo-app.theme-energy .profile-card {
+            border: 1px solid rgba(249,115,22,0.15);
+        }
+        .demo-app.theme-energy .profile-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 28px rgba(249,115,22,0.18);
+            border-color: rgba(249,115,22,0.4);
+        }
+        .demo-app.theme-energy .profile-avatar {
+            background: linear-gradient(135deg, #f97316, #2ec4b6);
+        }
+        .demo-app.theme-energy .profile-info h4 { color: #7c2d00; }
+        .demo-app.theme-energy .profile-stat { background: rgba(253,244,227,0.8); }
+        .demo-app.theme-energy .profile-current {
+            background: rgba(249,115,22,0.1);
+            border: 1px solid rgba(249,115,22,0.15);
+        }
+        .demo-app.theme-energy .profile-current-label { color: #f97316; }
+        .demo-app.theme-energy .demo-topbar-btn {
+            background: rgba(249,115,22,0.06);
+            border-color: rgba(249,115,22,0.2);
+            color: #9a3412;
+        }
+        .demo-app.theme-energy .demo-topbar-btn:hover {
+            border-color: rgba(249,115,22,0.5);
+            color: #f97316;
+            background: rgba(249,115,22,0.12);
+        }
+        .demo-app.theme-energy .notification-item.unread {
+            border-left-color: #f97316;
+        }
+        .demo-app.theme-energy .demo-search {
+            background: rgba(249,115,22,0.06);
+            border-color: rgba(249,115,22,0.2);
+            color: #9a3412;
+        }
+
+        /* ========== FROM-BUTTON MODAL EFFECT ========== */
+        @keyframes fromBtnIn {
+            from { opacity: 0; transform: scale(0.04); }
+            60%  { opacity: 1; }
+            to   { opacity: 1; transform: scale(1); }
+        }
+        .demo-app.fx-modal-from-btn .modal-overlay.active .modal {
+            animation: fromBtnIn 0.45s cubic-bezier(0.34, 1.35, 0.64, 1) forwards !important;
+        }
+
+        /* ========== EFFECTS BUILDER UI ========== */
+        .effects-list { display: flex; flex-direction: column; gap: 7px; }
+
+        .effect-item {
+            background: var(--builder-bg);
+            border: 1px solid var(--builder-border);
+            border-radius: 8px;
+            padding: 8px 10px;
+        }
+
+        .effect-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--builder-text);
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .effect-label i { color: var(--builder-accent); font-size: 10px; }
+
+        .effect-options { display: flex; gap: 5px; }
+
+        .effect-opt {
+            flex: 1;
+            padding: 5px 0;
+            background: var(--builder-card);
+            border: 1.5px solid var(--builder-border);
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--builder-muted);
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.15s ease;
+            text-align: center;
+        }
+
+        .effect-opt:hover { border-color: #cbd5e1; color: var(--builder-text); }
+        .effect-opt.selected { border-color: var(--builder-accent); background: #eff6ff; color: var(--builder-accent); }
+
+        /* ========== FADE EFFECT ANIMATIONS ========== */
+        @keyframes fadePageIn  { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fadePageOut { from { opacity: 1; } to { opacity: 0; } }
+        @keyframes fadeModalIn  { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fadeModalOut { from { opacity: 1; } to { opacity: 0; } }
+        @keyframes fadePulseBtn { 0%, 100% { opacity: 1; } 50% { opacity: 0.42; } }
+
+        /* Button fade override */
+        .demo-app.fx-btn-fade .demo-topbar-btn:hover {
+            animation: fadePulseBtn 1.4s ease-in-out infinite !important;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+        .demo-app.fx-btn-fade .table-action:hover {
+            animation: fadePulseBtn 1.4s ease-in-out infinite !important;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+        .demo-app.fx-btn-fade .filter-btn:hover {
+            animation: fadePulseBtn 1.4s ease-in-out infinite !important;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        /* Modal open fade override */
+        .demo-app.fx-modal-open-fade .modal-overlay.active .modal {
+            animation: fadeModalIn 0.6s ease-out !important;
+        }
