@@ -1,0 +1,3179 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cloudplus Demo Builder</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Cormorant+Garant:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            /* Builder Panel (Light) */
+            --builder-bg: #f8fafc;
+            --builder-card: #ffffff;
+            --builder-border: #e2e8f0;
+            --builder-text: #1e293b;
+            --builder-muted: #64748b;
+            --builder-accent: #3b82f6;
+
+            /* Demo App (Tech - Teal Corporate) */
+            --demo-sidebar: #0d3b6e;
+            --demo-sidebar-hover: #1a5296;
+            --demo-menu-active: #1a5296;
+            --demo-bg: #e8f4fd;
+            --demo-card: #ffffff;
+            --demo-card-hover: #f0f9ff;
+            --demo-border: #b3d9f0;
+            --demo-text: #0d2137;
+            --demo-text-secondary: #2a5f80;
+            --demo-text-muted: #5a8fa8;
+            --demo-accent: #00b0d8;
+            --demo-accent-light: rgba(0, 176, 216, 0.12);
+            --demo-cyan: #0288d1;
+            --demo-green: #10b981;
+            --demo-green-light: rgba(16, 185, 129, 0.15);
+            --demo-orange: #f59e0b;
+            --demo-orange-light: rgba(245, 158, 11, 0.15);
+            --demo-red: #ef4444;
+            --demo-red-light: rgba(239, 68, 68, 0.15);
+            --demo-glow: 0 0 20px rgba(0, 176, 216, 0.3);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--builder-bg);
+            color: var(--builder-text);
+            min-height: 100vh;
+        }
+
+        .builder-mode { display: flex; height: 100vh; }
+
+        /* ========== BUILDER SIDEBAR ========== */
+        .builder-sidebar {
+            width: 340px;
+            background: var(--builder-card);
+            border-right: 1px solid var(--builder-border);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+
+        .builder-header {
+            padding: 18px 20px;
+            border-bottom: 1px solid var(--builder-border);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+        }
+
+        .builder-logo { width: 36px; height: 36px; }
+        .builder-logo svg { width: 100%; height: 100%; }
+
+        .builder-title h1 { font-size: 15px; font-weight: 700; color: #0284c7; }
+        .builder-title span { font-size: 11px; color: var(--builder-muted); }
+
+        .builder-content { flex: 1; overflow-y: auto; padding: 18px; }
+
+        .builder-section { margin-bottom: 22px; }
+
+        .builder-section-title {
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--builder-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .builder-section-title i { color: var(--builder-accent); font-size: 11px; }
+
+        /* Style Grid */
+        .style-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+
+        .style-card {
+            background: var(--builder-bg);
+            border: 2px solid var(--builder-border);
+            border-radius: 8px;
+            padding: 8px 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+
+        .style-card:hover { border-color: #cbd5e1; }
+        .style-card.selected { border-color: var(--builder-accent); background: #eff6ff; }
+
+        .style-preview { height: 32px; border-radius: 5px; margin-bottom: 5px; }
+        .style-preview.tech { background: linear-gradient(135deg, #0d3b6e, #00b0d8); }
+        .style-preview.minimal { background: linear-gradient(135deg, #f8fafc, #94a3b8); }
+        .style-preview.energy { background: linear-gradient(135deg, #fbbf24, #ea580c); }
+
+        .style-name { font-size: 10px; font-weight: 600; color: var(--builder-muted); }
+
+        /* Industry Select */
+        .industry-select {
+            width: 100%;
+            padding: 10px 12px;
+            background: var(--builder-card);
+            border: 1px solid var(--builder-border);
+            border-radius: 8px;
+            color: var(--builder-text);
+            font-family: inherit;
+            font-size: 13px;
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+        }
+
+        .industry-select:focus { outline: none; border-color: var(--builder-accent); }
+
+        /* Toggle List */
+        .toggle-list { display: flex; flex-direction: column; gap: 5px; }
+
+        .toggle-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 10px;
+            background: var(--builder-bg);
+            border: 1px solid var(--builder-border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .toggle-item:hover { border-color: #cbd5e1; }
+        .toggle-item.active { border-color: var(--builder-accent); background: #eff6ff; }
+
+        .toggle-icon {
+            width: 26px;
+            height: 26px;
+            background: var(--builder-card);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--builder-muted);
+            font-size: 11px;
+            border: 1px solid var(--builder-border);
+        }
+
+        .toggle-item.active .toggle-icon {
+            background: var(--builder-accent);
+            color: white;
+            border-color: var(--builder-accent);
+        }
+
+        .toggle-info { flex: 1; }
+        .toggle-name { font-size: 12px; font-weight: 600; }
+        .toggle-desc { font-size: 9px; color: var(--builder-muted); }
+
+        .toggle-switch {
+            width: 34px;
+            height: 20px;
+            background: #cbd5e1;
+            border-radius: 10px;
+            position: relative;
+            transition: all 0.2s ease;
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 16px;
+            height: 16px;
+            background: white;
+            border-radius: 50%;
+            transition: all 0.2s ease;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .toggle-item.active .toggle-switch { background: var(--builder-accent); }
+        .toggle-item.active .toggle-switch::after { left: 16px; }
+
+        /* Builder Footer */
+        .builder-footer {
+            padding: 14px 18px;
+            border-top: 1px solid var(--builder-border);
+            background: var(--builder-bg);
+        }
+
+        .btn-launch {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-launch:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(59, 130, 246, 0.3); }
+
+        /* ========== BUILDER PREVIEW ========== */
+        .builder-preview {
+            flex: 1;
+            background: #e2e8f0;
+            padding: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .preview-frame {
+            width: 100%;
+            height: 100%;
+            max-width: 1100px;
+            background: var(--demo-bg);
+            border-radius: 14px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+            overflow: hidden;
+            display: flex;
+        }
+
+        /* ========== DEMO APP ========== */
+        .demo-app { display: flex; width: 100%; height: 100%; }
+
+        /* Demo Sidebar */
+        .demo-sidebar {
+            width: 200px;
+            background: var(--demo-sidebar);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+
+        .demo-logo {
+            padding: 16px 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid var(--demo-border);
+        }
+
+        .demo-logo-icon {
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(135deg, var(--demo-accent), var(--demo-cyan));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            color: white;
+        }
+
+        .demo-logo-text { font-weight: 700; font-size: 13px; color: var(--demo-text); }
+
+        .demo-nav { flex: 1; padding: 10px 8px; overflow-y: auto; }
+
+        .demo-nav-item {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            padding: 9px 11px;
+            border-radius: 7px;
+            color: var(--demo-text-secondary);
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-bottom: 2px;
+        }
+
+        .demo-nav-item:hover { background: var(--demo-sidebar-hover); color: var(--demo-text); }
+        .demo-nav-item.active { background: var(--demo-menu-active); color: var(--demo-text); }
+        .demo-nav-item i { width: 16px; text-align: center; font-size: 12px; }
+
+        .demo-nav-badge {
+            margin-left: auto;
+            padding: 2px 6px;
+            background: var(--demo-red);
+            color: white;
+            font-size: 9px;
+            font-weight: 600;
+            border-radius: 6px;
+        }
+
+        .demo-nav-divider { height: 1px; background: var(--demo-border); margin: 8px 10px; }
+
+        .demo-user {
+            padding: 12px 14px;
+            border-top: 1px solid var(--demo-border);
+            display: flex;
+            align-items: center;
+            gap: 9px;
+        }
+
+        .demo-user-avatar {
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, var(--demo-accent), var(--demo-cyan));
+            border-radius: 7px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 700;
+            color: white;
+        }
+
+        .demo-user-info { flex: 1; }
+        .demo-user-name { font-size: 11px; font-weight: 600; color: var(--demo-text); }
+        .demo-user-role { font-size: 9px; color: var(--demo-text-muted); }
+
+        /* Demo Main */
+        .demo-main { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: var(--demo-bg); }
+
+        .demo-topbar {
+            height: 50px;
+            background: var(--demo-card);
+            border-bottom: 1px solid var(--demo-border);
+            display: flex;
+            align-items: center;
+            padding: 0 18px;
+            gap: 14px;
+            flex-shrink: 0;
+        }
+
+        .demo-breadcrumb { font-size: 12px; color: var(--demo-text-secondary); }
+        .demo-breadcrumb b { color: var(--demo-text); }
+
+        .demo-search {
+            flex: 1;
+            max-width: 220px;
+            height: 32px;
+            background: var(--demo-bg);
+            border: 1px solid var(--demo-border);
+            border-radius: 7px;
+            padding: 0 10px;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            color: var(--demo-text-muted);
+            font-size: 11px;
+            cursor: pointer;
+        }
+
+        .demo-topbar-actions { margin-left: auto; display: flex; align-items: center; gap: 6px; }
+
+        .demo-topbar-btn {
+            width: 32px;
+            height: 32px;
+            background: var(--demo-bg);
+            border: 1px solid var(--demo-border);
+            border-radius: 7px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--demo-text-secondary);
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s ease;
+            font-size: 12px;
+        }
+
+        .demo-topbar-btn:hover { border-color: var(--demo-accent); color: var(--demo-accent); animation: actionPulseSm 0.75s ease-in-out infinite; }
+
+        .demo-topbar-btn .badge {
+            position: absolute;
+            top: -3px;
+            right: -3px;
+            width: 14px;
+            height: 14px;
+            background: var(--demo-red);
+            color: white;
+            font-size: 8px;
+            font-weight: 600;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Demo Page */
+        .demo-page { flex: 1; padding: 16px; overflow-y: auto; }
+
+        .demo-page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .demo-page-title h1 { font-size: 18px; font-weight: 700; color: var(--demo-text); margin-bottom: 3px; }
+        .demo-page-subtitle { font-size: 11px; color: var(--demo-text-secondary); }
+        .demo-page-actions { display: flex; gap: 6px; }
+
+        .demo-btn {
+            padding: 7px 14px;
+            border-radius: 7px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.2s ease;
+            border: none;
+        }
+
+        .demo-btn-primary { background: linear-gradient(135deg, var(--demo-accent), var(--demo-cyan)); color: white; }
+        .demo-btn-primary:hover { box-shadow: var(--demo-glow); }
+        .demo-btn-secondary { background: var(--demo-card); border: 1px solid var(--demo-border); color: var(--demo-text); }
+        .demo-btn-secondary:hover { border-color: var(--demo-accent); color: var(--demo-accent); }
+
+        /* Stats Grid */
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px; }
+
+        .stat-card {
+            background: var(--demo-card);
+            border: 1px solid var(--demo-border);
+            border-radius: 10px;
+            padding: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .stat-card:hover { border-color: var(--demo-accent); transform: translateY(-2px); }
+
+        .stat-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+        .stat-label { font-size: 10px; color: var(--demo-text-secondary); }
+
+        .stat-icon {
+            width: 28px;
+            height: 28px;
+            background: var(--demo-accent-light);
+            border-radius: 7px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--demo-accent);
+            font-size: 12px;
+        }
+
+        .stat-icon.green { background: var(--demo-green-light); color: var(--demo-green); }
+        .stat-icon.orange { background: var(--demo-orange-light); color: var(--demo-orange); }
+
+        .stat-value { font-size: 22px; font-weight: 800; font-family: 'JetBrains Mono', monospace; color: var(--demo-text); margin-bottom: 2px; }
+        .stat-change { font-size: 9px; color: var(--demo-green); display: flex; align-items: center; gap: 3px; }
+        .stat-change.negative { color: var(--demo-red); }
+
+        /* Data Card */
+        .data-card {
+            background: var(--demo-card);
+            border: 1px solid var(--demo-border);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .data-header {
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--demo-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .data-title { font-size: 12px; font-weight: 600; color: var(--demo-text); }
+
+        /* Data Table */
+        .data-table { width: 100%; border-collapse: collapse; }
+
+        .data-table th {
+            text-align: left;
+            padding: 8px 14px;
+            font-size: 9px;
+            font-weight: 600;
+            color: var(--demo-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background: var(--demo-bg);
+            border-bottom: 1px solid var(--demo-border);
+            cursor: pointer;
+            position: relative;
+        }
+
+        .data-table th:hover { color: var(--demo-accent); }
+
+        .data-table th .filter-icon {
+            margin-left: 4px;
+            font-size: 8px;
+            opacity: 0.5;
+        }
+
+        .data-table th.filtered .filter-icon { color: var(--demo-accent); opacity: 1; }
+
+        .data-table td {
+            padding: 10px 14px;
+            font-size: 11px;
+            border-bottom: 1px solid var(--demo-border);
+            color: var(--demo-text);
+        }
+
+        .data-table tr:last-child td { border-bottom: none; }
+        .data-table tr:hover { background: rgba(139, 92, 246, 0.05); }
+
+        .table-id { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--demo-accent); font-weight: 500; }
+
+        .table-status {
+            display: inline-flex;
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-size: 9px;
+            font-weight: 500;
+        }
+
+        .table-status.blue { background: var(--demo-accent-light); color: var(--demo-accent); }
+        .table-status.green { background: var(--demo-green-light); color: var(--demo-green); }
+        .table-status.orange { background: var(--demo-orange-light); color: var(--demo-orange); }
+        .table-status.red { background: var(--demo-red-light); color: var(--demo-red); }
+
+        .table-actions { display: flex; gap: 3px; }
+
+        .table-action {
+            width: 24px;
+            height: 24px;
+            background: var(--demo-bg);
+            border: 1px solid var(--demo-border);
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--demo-text-muted);
+            cursor: pointer;
+            font-size: 9px;
+            transition: all 0.2s ease;
+        }
+
+        .table-action:hover { border-color: var(--demo-accent); color: var(--demo-accent); animation: actionPulse 0.75s ease-in-out infinite; }
+
+        /* Filter Dropdown */
+        .filter-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            min-width: 180px;
+            background: var(--demo-card);
+            border: 1px solid var(--demo-border);
+            border-radius: 8px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            z-index: 100;
+            display: none;
+            padding: 8px 0;
+        }
+
+        .filter-dropdown.active { display: block; }
+
+        .filter-search {
+            margin: 0 8px 8px;
+            padding: 6px 8px;
+            background: var(--demo-bg);
+            border: 1px solid var(--demo-border);
+            border-radius: 5px;
+            color: var(--demo-text);
+            font-size: 10px;
+            width: calc(100% - 16px);
+        }
+
+        .filter-search:focus { outline: none; border-color: var(--demo-accent); }
+
+        .filter-options { max-height: 150px; overflow-y: auto; }
+
+        .filter-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            font-size: 10px;
+            color: var(--demo-text-secondary);
+            cursor: pointer;
+        }
+
+        .filter-option:hover { background: var(--demo-accent-light); color: var(--demo-text); }
+
+        .filter-checkbox {
+            width: 14px;
+            height: 14px;
+            border: 1px solid var(--demo-border);
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 8px;
+            color: transparent;
+        }
+
+        .filter-option.selected .filter-checkbox {
+            background: var(--demo-accent);
+            border-color: var(--demo-accent);
+            color: white;
+        }
+
+        /* Filters Bar */
+        .filters-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 6px 10px;
+            background: var(--demo-card);
+            border: 1px solid var(--demo-border);
+            border-radius: 6px;
+            font-size: 10px;
+            color: var(--demo-text-secondary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.2s ease;
+        }
+
+        .filter-btn:hover { border-color: var(--demo-accent); color: var(--demo-accent); animation: actionPulseSm 0.75s ease-in-out infinite; }
+        .filter-btn.active { background: var(--demo-accent-light); border-color: var(--demo-accent); color: var(--demo-accent); }
+
+        .filter-tag {
+            padding: 4px 8px;
+            background: var(--demo-accent-light);
+            border-radius: 4px;
+            font-size: 9px;
+            color: var(--demo-accent);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .filter-tag-close { cursor: pointer; opacity: 0.7; }
+        .filter-tag-close:hover { opacity: 1; }
+
+        /* Date Range Filter */
+        .date-range-filter {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 10px;
+            background: var(--demo-card);
+            border: 1px solid var(--demo-border);
+            border-radius: 6px;
+            font-size: 10px;
+            color: var(--demo-text-secondary);
+        }
+
+        .date-range-filter input {
+            background: transparent;
+            border: none;
+            color: var(--demo-text);
+            font-size: 10px;
+            width: 90px;
+        }
+
+        .date-range-filter input:focus { outline: none; }
+
+        /* Cards Grid */
+        .cards-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+
+        .profile-card {
+            background: var(--demo-card);
+            border: 1px solid var(--demo-border);
+            border-radius: 10px;
+            padding: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .profile-card:hover { border-color: var(--demo-accent); transform: translateY(-2px); }
+
+        .profile-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+
+        .profile-avatar {
+            width: 38px;
+            height: 38px;
+            background: linear-gradient(135deg, var(--demo-accent), var(--demo-cyan));
+            border-radius: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 700;
+            color: white;
+        }
+
+        .profile-info h4 { font-size: 12px; font-weight: 600; color: var(--demo-text); margin-bottom: 2px; }
+
+        .profile-status { display: flex; align-items: center; gap: 4px; font-size: 9px; }
+        .profile-status.online { color: var(--demo-green); }
+        .profile-status.offline { color: var(--demo-text-muted); }
+        .profile-status i { font-size: 6px; }
+
+        .profile-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
+
+        .profile-stat {
+            text-align: center;
+            padding: 6px;
+            background: var(--demo-bg);
+            border-radius: 6px;
+        }
+
+        .profile-stat-value { font-size: 14px; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--demo-text); }
+        .profile-stat-label { font-size: 8px; color: var(--demo-text-muted); }
+
+        .profile-current {
+            padding: 8px;
+            background: var(--demo-accent-light);
+            border-radius: 6px;
+        }
+
+        .profile-current-label { font-size: 8px; color: var(--demo-accent); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px; }
+        .profile-current-text { font-size: 10px; font-weight: 500; color: var(--demo-text); }
+
+        /* Map */
+        .map-card {
+            background: var(--demo-card);
+            border: 1px solid var(--demo-border);
+            border-radius: 10px;
+            overflow: hidden;
+            height: 350px;
+            position: relative;
+        }
+
+        .map-container {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #0d3b6e, #1a5296);
+            position: relative;
+        }
+
+        .map-grid {
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(0, 176, 216, 0.12) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 176, 216, 0.12) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        .map-vehicle {
+            position: absolute;
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--demo-accent), var(--demo-cyan));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: white;
+            box-shadow: var(--demo-glow);
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .map-vehicle:hover { transform: scale(1.15); }
+
+        .map-destination {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: var(--demo-card);
+            border: 2px solid var(--demo-accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--demo-accent);
+            font-size: 8px;
+        }
+
+        .map-legend {
+            position: absolute;
+            bottom: 12px;
+            left: 12px;
+            background: var(--demo-card);
+            border: 1px solid var(--demo-border);
+            border-radius: 8px;
+            padding: 10px 12px;
+        }
+
+        .legend-title { font-size: 9px; font-weight: 600; color: var(--demo-text-muted); text-transform: uppercase; margin-bottom: 6px; }
+        .legend-items { display: flex; flex-direction: column; gap: 4px; }
+        .legend-item { display: flex; align-items: center; gap: 6px; font-size: 9px; color: var(--demo-text-secondary); }
+        .legend-dot { width: 8px; height: 8px; border-radius: 3px; }
+        .legend-dot.active { background: var(--demo-accent); }
+        .legend-dot.dest { background: var(--demo-cyan); }
+
+        /* Hidden */
+        .demo-page-content { display: none; }
+        .demo-page-content.active { display: block; }
+
+        /* Activity */
+        .activity-list { padding: 12px; }
+
+        .activity-item {
+            display: flex;
+            gap: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--demo-border);
+        }
+
+        .activity-item:last-child { border-bottom: none; }
+
+        .activity-icon {
+            width: 28px;
+            height: 28px;
+            background: var(--demo-accent-light);
+            border-radius: 7px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--demo-accent);
+            font-size: 10px;
+            flex-shrink: 0;
+        }
+
+        .activity-icon.green { background: var(--demo-green-light); color: var(--demo-green); }
+        .activity-icon.orange { background: var(--demo-orange-light); color: var(--demo-orange); }
+
+        .activity-content { flex: 1; }
+        .activity-text { font-size: 10px; color: var(--demo-text-secondary); margin-bottom: 2px; }
+        .activity-text strong { color: var(--demo-text); }
+        .activity-time { font-size: 8px; color: var(--demo-text-muted); }
+
+        /* Cards Row */
+        .cards-row { display: grid; grid-template-columns: 2fr 1fr; gap: 12px; }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-overlay.active { display: flex; }
+
+        .modal {
+            background: var(--demo-card);
+            border: 1px solid var(--demo-border);
+            border-radius: 12px;
+            width: 100%;
+            max-width: 420px;
+            max-height: 90vh;
+            overflow: hidden;
+        }
+
+        .modal-header {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--demo-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-title { font-size: 14px; font-weight: 700; color: var(--demo-text); }
+
+        .modal-close {
+            width: 28px;
+            height: 28px;
+            background: var(--demo-bg);
+            border: 1px solid var(--demo-border);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--demo-text-muted);
+            cursor: pointer;
+            font-size: 10px;
+        }
+
+        .modal-close:hover { border-color: var(--demo-red); color: var(--demo-red); }
+
+        .modal-body { padding: 16px; overflow-y: auto; }
+
+        .form-group { margin-bottom: 12px; }
+        .form-label { display: block; font-size: 10px; font-weight: 600; margin-bottom: 5px; color: var(--demo-text-secondary); }
+
+        .form-input {
+            width: 100%;
+            padding: 8px 10px;
+            background: var(--demo-bg);
+            border: 1px solid var(--demo-border);
+            border-radius: 6px;
+            color: var(--demo-text);
+            font-family: inherit;
+            font-size: 11px;
+        }
+
+        .form-input:focus { outline: none; border-color: var(--demo-accent); }
+
+        .form-select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237070a0' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            padding-right: 32px;
+        }
+
+        .modal-footer {
+            padding: 12px 16px;
+            border-top: 1px solid var(--demo-border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            background: var(--demo-bg);
+        }
+
+        /* Notifications */
+        .notifications-panel {
+            position: fixed;
+            top: 0;
+            right: -320px;
+            width: 320px;
+            height: 100%;
+            background: var(--demo-card);
+            border-left: 1px solid var(--demo-border);
+            z-index: 1000;
+            transition: right 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .notifications-panel.active { right: 0; }
+
+        .notifications-header {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--demo-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .notifications-header h3 { font-size: 14px; font-weight: 600; color: var(--demo-text); }
+
+        .notifications-body { flex: 1; overflow-y: auto; padding: 12px; }
+
+        .notification-item {
+            padding: 10px;
+            background: var(--demo-bg);
+            border-radius: 8px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .notification-item:hover { background: var(--demo-accent-light); }
+        .notification-item.unread { border-left: 3px solid var(--demo-accent); }
+        .notification-title { font-size: 11px; font-weight: 600; color: var(--demo-text); margin-bottom: 3px; }
+        .notification-text { font-size: 10px; color: var(--demo-text-secondary); margin-bottom: 4px; }
+        .notification-time { font-size: 8px; color: var(--demo-text-muted); }
+
+        /* Row highlight animation */
+        @keyframes rowHighlight {
+            0% { background: rgba(0, 176, 216, 0.28); }
+            100% { background: transparent; }
+        }
+        .row-highlighted td { animation: rowHighlight 2.5s ease-out; }
+        .card-highlighted { animation: rowHighlight 2.5s ease-out; border-color: var(--demo-accent) !important; }
+
+        /* Powered by */
+        .powered-by {
+            position: fixed;
+            bottom: 12px;
+            right: 12px;
+            background: var(--builder-card);
+            border: 1px solid var(--builder-border);
+            border-radius: 8px;
+            padding: 6px 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 10px;
+            color: var(--builder-muted);
+            z-index: 100;
+        }
+
+        .powered-by svg { width: 18px; height: 18px; }
+        .powered-by span { font-weight: 600; color: #0284c7; }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--demo-border); border-radius: 2px; }
+
+        /* Client Mode */
+        .client-mode .builder-sidebar { display: none; }
+        .client-mode .builder-preview { padding: 0; }
+        .client-mode .preview-frame { max-width: none; border-radius: 0; box-shadow: none; }
+
+        /* ========== THEME ANIMATIONS ========== */
+        @keyframes techFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-4px); }
+        }
+        @keyframes techGlow {
+            0%, 100% { box-shadow: 0 0 18px rgba(0,176,216,0.45), 0 4px 15px rgba(0,0,0,0.2); }
+            50% { box-shadow: 0 0 38px rgba(0,176,216,0.8), 0 0 70px rgba(2,136,209,0.25), 0 4px 15px rgba(0,0,0,0.2); }
+        }
+        @keyframes techScan {
+            0% { left: -80%; }
+            100% { left: 160%; }
+        }
+        @keyframes techBorderPulse {
+            0%, 100% { border-color: rgba(0,176,216,0.35); }
+            50% { border-color: rgba(0,176,216,0.8); }
+        }
+        @keyframes techTopbarGlow {
+            0%, 100% { box-shadow: 0 2px 20px rgba(0,176,216,0.12); }
+            50% { box-shadow: 0 2px 30px rgba(0,176,216,0.28); }
+        }
+        @keyframes modalSlideTechIn {
+            from { transform: scale(0.88) translateY(-28px); opacity: 0; filter: blur(6px); }
+            to { transform: scale(1) translateY(0); opacity: 1; filter: blur(0); }
+        }
+        @keyframes modalSlideTechOut {
+            from { transform: scale(1) translateY(0); opacity: 1; filter: blur(0); }
+            to { transform: scale(0.88) translateY(-28px); opacity: 0; filter: blur(6px); }
+        }
+        @keyframes modalSlideMinIn {
+            from { transform: translateY(22px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        @keyframes modalSlideMinOut {
+            from { transform: translateY(0); opacity: 1; }
+            to { transform: translateY(22px); opacity: 0; }
+        }
+
+        /* ========== NAV OVERLAY (TECH) ========== */
+        .nav-toggle-btn {
+            display: none;
+            width: 34px;
+            height: 34px;
+            background: var(--demo-card);
+            border: 1px solid var(--demo-border);
+            border-radius: 8px;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--demo-text-secondary);
+            font-size: 14px;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+        .nav-toggle-btn:hover { border-color: var(--demo-accent); color: var(--demo-accent); box-shadow: 0 0 12px rgba(0,176,216,0.3); }
+
+        .nav-backdrop {
+            display: none;
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.55);
+            z-index: 140;
+            backdrop-filter: blur(3px);
+            transition: opacity 0.3s ease;
+        }
+        .nav-backdrop.active { display: block; }
+
+        /* ========== TECH MODE ========== */
+        .demo-app.theme-tech {
+            position: relative;
+            overflow: hidden;
+        }
+        /* sidebar hidden in tech — handled by display:none rule at end of stylesheet */
+        .demo-app.theme-tech .nav-toggle-btn {
+            display: flex;
+        }
+        .demo-app.theme-tech .demo-topbar {
+            border-bottom: 1px solid rgba(0,176,216,0.25);
+            background: rgba(255,255,255,0.97);
+            backdrop-filter: blur(10px);
+            animation: techTopbarGlow 3s ease-in-out infinite;
+        }
+        .demo-app.theme-tech .demo-btn-primary {
+            animation: techFloat 3s ease-in-out infinite, techGlow 2.5s ease-in-out infinite;
+            background: linear-gradient(135deg, #00b0d8 0%, #0077a8 60%, #0288d1 150%);
+            letter-spacing: 0.3px;
+        }
+        .demo-app.theme-tech .demo-btn-secondary {
+            transition: border-color 0.2s, color 0.2s, box-shadow 0.2s;
+        }
+        .demo-app.theme-tech .demo-btn-secondary:hover {
+            box-shadow: 0 0 12px rgba(0,176,216,0.25);
+        }
+        .demo-app.theme-tech .stat-card {
+            position: relative;
+            overflow: hidden;
+            animation: techBorderPulse 3s ease-in-out infinite;
+        }
+        .demo-app.theme-tech .stat-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -80%;
+            width: 60%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0,176,216,0.07), transparent);
+            animation: techScan 4s ease-in-out infinite;
+            pointer-events: none;
+        }
+        .demo-app.theme-tech .stat-card:hover {
+            border-color: var(--demo-accent);
+            box-shadow: 0 0 20px rgba(0,176,216,0.2);
+            transform: translateY(-3px);
+        }
+        .demo-app.theme-tech .demo-nav-item.active {
+            background: linear-gradient(90deg, rgba(0,176,216,0.22), rgba(0,176,216,0.06)) !important;
+            border-left: 3px solid var(--demo-accent) !important;
+            border-radius: 0 7px 7px 0;
+        }
+        .demo-app.theme-tech .demo-logo-icon {
+            box-shadow: 0 0 18px rgba(0,176,216,0.5);
+            animation: techGlow 2.5s ease-in-out infinite;
+        }
+        .demo-app.theme-tech .table-action:hover {
+            box-shadow: 0 0 10px rgba(0,176,216,0.3);
+        }
+        .demo-app.theme-tech .data-table tr:hover td {
+            background: rgba(0,176,216,0.06);
+        }
+        .demo-app.theme-tech .profile-card:hover {
+            box-shadow: 0 0 24px rgba(0,176,216,0.2);
+        }
+        .demo-app.theme-tech .filter-btn:hover {
+            box-shadow: 0 0 10px rgba(0,176,216,0.2);
+        }
+        .demo-app.theme-tech .modal-overlay.active .modal {
+            animation: modalSlideTechIn 0.32s cubic-bezier(0.34, 1.4, 0.64, 1);
+        }
+        .demo-app.theme-tech .modal-overlay.closing .modal {
+            animation: modalSlideTechOut 0.22s ease-in forwards;
+        }
+        .demo-app.theme-tech .modal {
+            border: 1px solid rgba(0,176,216,0.25);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15), 0 0 40px rgba(0,176,216,0.12);
+        }
+        .demo-app.theme-tech .demo-topbar-btn:hover {
+            box-shadow: 0 0 12px rgba(0,176,216,0.3);
+        }
+
+        /* ========== MINIMAL MODE ========== */
+        .demo-app.theme-minimal .demo-sidebar {
+            border-right: 1px solid #e2e8f0 !important;
+            box-shadow: none;
+        }
+        .demo-app.theme-minimal .demo-nav-item {
+            border-radius: 6px;
+            transition: background 0.15s ease, color 0.15s ease;
+        }
+        .demo-app.theme-minimal .demo-nav-item.active {
+            background: #eff6ff !important;
+            color: #2563eb !important;
+            border-left: 3px solid #2563eb !important;
+            border-radius: 0 6px 6px 0;
+            padding-left: 8px;
+        }
+        .demo-app.theme-minimal .demo-nav-item.active i { color: #2563eb !important; }
+        .demo-app.theme-minimal .demo-btn-primary {
+            animation: none !important;
+            box-shadow: none !important;
+            background: #2563eb !important;
+            transition: background 0.18s ease, transform 0.15s ease, box-shadow 0.15s ease;
+        }
+        .demo-app.theme-minimal .demo-btn-primary:hover {
+            background: #1d4ed8 !important;
+            transform: translateY(-1px) !important;
+            box-shadow: 0 4px 12px rgba(37,99,235,0.3) !important;
+        }
+        .demo-app.theme-minimal .stat-card {
+            animation: none !important;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+            transition: box-shadow 0.18s ease, border-color 0.18s ease;
+        }
+        .demo-app.theme-minimal .stat-card::after { display: none !important; }
+        .demo-app.theme-minimal .stat-card:hover {
+            transform: none !important;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.09) !important;
+            border-color: #93c5fd !important;
+        }
+        .demo-app.theme-minimal .demo-topbar {
+            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+            animation: none !important;
+        }
+        .demo-app.theme-minimal .demo-logo-icon {
+            box-shadow: 0 2px 8px rgba(37,99,235,0.22);
+        }
+        .demo-app.theme-minimal .data-table tr:hover td {
+            background: #f8fafc;
+        }
+        .demo-app.theme-minimal .profile-card:hover {
+            transform: none !important;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.09);
+        }
+        .demo-app.theme-minimal .modal-overlay.active .modal {
+            animation: modalSlideMinIn 0.22s ease-out;
+        }
+        .demo-app.theme-minimal .modal-overlay.closing .modal {
+            animation: modalSlideMinOut 0.18s ease-in forwards;
+        }
+        .demo-app.theme-minimal .modal {
+            box-shadow: 0 10px 40px rgba(0,0,0,0.12);
+        }
+        .demo-app.theme-minimal .demo-btn-secondary {
+            transition: border-color 0.15s ease, color 0.15s ease;
+        }
+
+        /* ========== PAGE TRANSITIONS ========== */
+        @keyframes techPageOut {
+            from { opacity: 1; transform: scale(1); filter: blur(0); }
+            to   { opacity: 0; transform: scale(0.93); filter: blur(6px); }
+        }
+        @keyframes techPageReveal {
+            from { clip-path: circle(0% at var(--reveal-x, 50%) var(--reveal-y, 50%)); opacity: 0.5; }
+            to   { clip-path: circle(160% at var(--reveal-x, 50%) var(--reveal-y, 50%)); opacity: 1; }
+        }
+        @keyframes minPageIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ========== ACTION BUTTONS PULSE ON HOVER ========== */
+        @keyframes actionPulse {
+            0%, 100% { transform: scale(1.40); }
+            50%       { transform: scale(1.59); }
+        }
+        @keyframes actionPulseSm {
+            0%, 100% { transform: scale(1.27); }
+            50%       { transform: scale(1.38); }
+        }
+
+        /* ========== NAV BTN RIPPLE ========== */
+        @keyframes navBtnRipple {
+            0%   { transform: scale(0); opacity: 0.7; }
+            100% { transform: scale(60); opacity: 0; }
+        }
+
+        /* ========== TECH GLASSMORPHISM OVERLAY MENU ========== */
+        .tech-nav-overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+            background: rgba(6, 6, 18, 0.36);
+            backdrop-filter: blur(2px);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.28s ease;
+        }
+        .tech-nav-overlay.open {
+            opacity: 1;
+            pointer-events: all;
+        }
+        .tech-nav-glass {
+            background: rgba(10, 28, 50, 0.30);
+            backdrop-filter: blur(28px) saturate(160%);
+            -webkit-backdrop-filter: blur(28px) saturate(160%);
+            border: 1px solid rgba(0, 176, 216, 0.35);
+            border-radius: 24px;
+            padding: 32px 36px;
+            min-width: 520px;
+            box-shadow: 0 0 100px rgba(0,176,216,0.12), 0 40px 80px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.1), inset 0 0 60px rgba(0,176,216,0.04);
+            transform: scale(0.87) translateY(-16px);
+            transition: transform 0.34s cubic-bezier(0.34, 1.4, 0.64, 1);
+        }
+        .tech-nav-overlay.open .tech-nav-glass {
+            transform: scale(1) translateY(0);
+        }
+        .tech-nav-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid rgba(0,176,216,0.25);
+        }
+        .tech-nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            font-size: 13px;
+            font-weight: 700;
+            color: white;
+        }
+        .tech-nav-logo-icon {
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, var(--demo-accent), var(--demo-cyan));
+            border-radius: 7px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: white;
+            box-shadow: 0 0 14px rgba(0,176,216,0.5);
+        }
+        .tech-nav-close {
+            width: 28px;
+            height: 28px;
+            background: rgba(0,176,216,0.08);
+            border: 1px solid rgba(0,176,216,0.28);
+            border-radius: 7px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(160,160,200,0.8);
+            cursor: pointer;
+            font-size: 10px;
+            transition: all 0.2s ease;
+        }
+        .tech-nav-close:hover { background: rgba(239,68,68,0.2); border-color: rgba(239,68,68,0.5); color: #ef4444; }
+        .tech-nav-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+        .tech-nav-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 9px;
+            padding: 22px 14px 20px;
+            border: 1px solid rgba(0,176,216,0.2);
+            border-radius: 14px;
+            cursor: pointer;
+            color: rgba(200,230,245,0.9);
+            font-size: 11px;
+            font-weight: 500;
+            font-family: inherit;
+            background: rgba(0,176,216,0.07);
+            transition: all 0.22s ease;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .tech-nav-btn:hover {
+            background: rgba(0,176,216,0.22);
+            border-color: rgba(0,176,216,0.7);
+            color: white;
+            box-shadow: 0 0 24px rgba(0,176,216,0.3);
+            transform: scale(1.06) translateY(-2px);
+        }
+        .tech-nav-btn i { font-size: 22px; color: var(--demo-accent); }
+        .tech-nav-btn.active {
+            background: rgba(0,176,216,0.25);
+            border-color: rgba(0,176,216,0.75);
+            color: white;
+            box-shadow: 0 0 22px rgba(0,176,216,0.32);
+        }
+        .tech-nav-btn.active i { color: #00e5ff; }
+        .tech-nav-badge2 {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 16px;
+            height: 16px;
+            background: var(--demo-red);
+            color: white;
+            font-size: 8px;
+            font-weight: 700;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .tech-nav-footer {
+            margin-top: 18px;
+            padding-top: 14px;
+            border-top: 1px solid rgba(0,176,216,0.18);
+            display: flex;
+            align-items: center;
+            gap: 9px;
+        }
+        .tech-nav-user-ava {
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, var(--demo-accent), var(--demo-cyan));
+            border-radius: 7px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px;
+            font-weight: 700;
+            color: white;
+            box-shadow: 0 0 10px rgba(0,176,216,0.4);
+        }
+        .tech-nav-user-name { font-size: 11px; font-weight: 600; color: white; }
+        .tech-nav-user-role { font-size: 9px; color: rgba(160,160,200,0.65); }
+
+        /* In tech mode: hide sidebar, backdrop; show only overlay */
+        .demo-app.theme-tech .demo-sidebar { display: none !important; }
+        .demo-app.theme-tech .nav-backdrop { display: none !important; }
+        .demo-app.theme-tech .tech-nav-overlay { display: flex; }
+
+        /* In other modes: hide tech overlay */
+        .demo-app:not(.theme-tech) .tech-nav-overlay { display: none !important; }
+
+        /* ========== ENERGY THEME ========== */
+        .demo-app.theme-energy {
+            font-family: 'Playfair Display', serif !important;
+        }
+        .demo-app.theme-energy * {
+            font-family: 'Playfair Display', serif !important;
+        }
+        /* Cormorant Garant on headings/titles */
+        .demo-app.theme-energy h1,
+        .demo-app.theme-energy h2,
+        .demo-app.theme-energy h3,
+        .demo-app.theme-energy h4,
+        .demo-app.theme-energy .demo-page-title h1,
+        .demo-app.theme-energy .data-title,
+        .demo-app.theme-energy .demo-logo-text,
+        .demo-app.theme-energy .stat-value,
+        .demo-app.theme-energy .modal-title,
+        .demo-app.theme-energy .demo-nav-item span,
+        .demo-app.theme-energy .demo-page-subtitle {
+            font-family: 'Cormorant Garant', 'Playfair Display', serif !important;
+        }
+        .demo-app.theme-energy .demo-page-title h1 {
+            font-style: italic;
+            font-weight: 700;
+            font-size: 22px;
+            color: #7c2d00;
+        }
+        .demo-app.theme-energy .data-title {
+            font-style: italic;
+            font-size: 14px;
+        }
+        .demo-app.theme-energy .demo-main {
+            background: #fdf4e3;
+        }
+        /* Energy: sidebar hidden by default, slides in */
+        .demo-app.theme-energy .demo-sidebar {
+            background: linear-gradient(180deg, #1e0a00 0%, #3d1500 100%);
+            border-right: none;
+            box-shadow: 4px 0 32px rgba(0,0,0,0.5);
+            position: absolute;
+            left: 0; top: 0; bottom: 0;
+            z-index: 150;
+            transform: translateX(-100%);
+            transition: transform 0.38s cubic-bezier(0.34, 1.3, 0.64, 1);
+            display: flex !important;
+        }
+        .demo-app.theme-energy .demo-sidebar.open {
+            transform: translateX(0);
+        }
+        .demo-app.theme-energy .nav-backdrop.active {
+            display: block !important;
+        }
+        /* ВАЖНО: показать кнопку бургера в Energy */
+        .demo-app.theme-energy .nav-toggle-btn {
+            display: flex !important;
+            color: #f97316;
+            border-color: rgba(249,115,22,0.3);
+            background: rgba(249,115,22,0.06);
+        }
+        .demo-app.theme-energy .nav-toggle-btn:hover {
+            background: rgba(249,115,22,0.15);
+            border-color: rgba(249,115,22,0.6);
+            box-shadow: 0 0 14px rgba(249,115,22,0.3);
+        }
+        .demo-app.theme-energy .demo-logo-text {
+            color: #fef9f0;
+            font-style: italic;
+            font-size: 15px;
+            font-weight: 700;
+        }
+        .demo-app.theme-energy .demo-logo-icon {
+            background: linear-gradient(135deg, #f97316, #c2410c);
+            box-shadow: 0 0 18px rgba(249,115,22,0.6);
+        }
+        .demo-app.theme-energy .demo-nav-item {
+            color: rgba(254,240,210,0.7);
+            border-radius: 10px;
+            transition: all 0.22s cubic-bezier(0.34, 1.5, 0.64, 1);
+            transform-origin: left center;
+            font-style: italic;
+            padding: 10px 12px;
+        }
+        .demo-app.theme-energy .demo-nav-item:hover {
+            color: #fff7ed;
+            background: rgba(249,115,22,0.2);
+            transform: scaleX(1.09) translateX(8px);
+            padding-left: 18px;
+            box-shadow: 3px 0 16px rgba(249,115,22,0.3);
+        }
+        .demo-app.theme-energy .demo-nav-item.active {
+            background: rgba(249,115,22,0.28);
+            color: #fed7aa;
+            border-left: 3px solid #f97316;
+            box-shadow: 3px 0 20px rgba(249,115,22,0.35);
+        }
+        .demo-app.theme-energy .demo-nav-item.active i { color: #fb923c; }
+        .demo-app.theme-energy .demo-user-avatar {
+            background: linear-gradient(135deg, #f97316, #2ec4b6);
+        }
+        .demo-app.theme-energy .demo-user-name { color: #fef9f0; }
+        .demo-app.theme-energy .demo-user-role { color: rgba(254,249,240,0.5); }
+        .demo-app.theme-energy .demo-topbar {
+            background: rgba(253,244,227,0.97);
+            border-bottom: 2px solid rgba(249,115,22,0.2);
+            box-shadow: 0 2px 20px rgba(249,115,22,0.1);
+        }
+        .demo-app.theme-energy .demo-breadcrumb { color: #7c2d00; font-style: italic; }
+        .demo-app.theme-energy .demo-page-subtitle { color: #9a3412; font-style: italic; }
+        .demo-app.theme-energy .stat-card {
+            background: #ffffff;
+            border: 1px solid rgba(249,115,22,0.2);
+            box-shadow: 0 3px 16px rgba(249,115,22,0.09);
+        }
+        .demo-app.theme-energy .stat-card::after { display: none; }
+        .demo-app.theme-energy .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(249,115,22,0.2);
+            border-color: rgba(249,115,22,0.45);
+        }
+        .demo-app.theme-energy .stat-label { color: #92400e; font-style: italic; font-size: 11px; }
+        .demo-app.theme-energy .stat-value {
+            color: #7c2d00;
+            font-style: italic;
+            font-weight: 700;
+            font-size: 26px;
+        }
+        .demo-app.theme-energy .stat-change { color: #2ec4b6; }
+        .demo-app.theme-energy .stat-icon { background: rgba(249,115,22,0.15); color: #f97316; }
+        .demo-app.theme-energy .stat-icon.orange { background: rgba(249,115,22,0.2); color: #c2410c; }
+        .demo-app.theme-energy .stat-icon.green { background: rgba(46,196,182,0.15); color: #2ec4b6; }
+        .demo-app.theme-energy .data-card {
+            background: #ffffff;
+            border: 1px solid rgba(249,115,22,0.15);
+            box-shadow: 0 3px 16px rgba(249,115,22,0.07);
+        }
+        .demo-app.theme-energy .demo-btn {
+            line-height: 1.4;
+            padding: 9px 16px;
+        }
+        .demo-app.theme-energy .demo-btn-primary {
+            background: linear-gradient(135deg, #f97316, #c2410c);
+            color: white;
+            box-shadow: 0 4px 20px rgba(249,115,22,0.45);
+            border: none;
+            font-style: italic;
+            font-weight: 700;
+            font-size: 12px;
+        }
+        .demo-app.theme-energy .demo-btn-primary:hover {
+            background: linear-gradient(135deg, #fb923c, #ea580c);
+            box-shadow: 0 6px 28px rgba(249,115,22,0.6);
+            transform: translateY(-2px);
+        }
+        .demo-app.theme-energy .demo-btn-secondary {
+            border: 1.5px solid #2ec4b6;
+            color: #2ec4b6;
+            font-style: italic;
+            background: rgba(46,196,182,0.06);
+        }
+        .demo-app.theme-energy .demo-btn-secondary:hover {
+            background: rgba(46,196,182,0.12);
+            box-shadow: 0 0 14px rgba(46,196,182,0.3);
+        }
+        .demo-app.theme-energy .table-action:hover {
+            background: rgba(249,115,22,0.12);
+            color: #f97316;
+            border-color: rgba(249,115,22,0.3);
+        }
+        .demo-app.theme-energy .data-table tr:hover td {
+            background: rgba(249,115,22,0.04);
+        }
+        .demo-app.theme-energy .data-table th {
+            color: #92400e;
+            background: rgba(253,244,227,0.7);
+        }
+        .demo-app.theme-energy .modal {
+            background: #fdf4e3;
+            border: 1px solid rgba(249,115,22,0.25);
+            box-shadow: 0 20px 60px rgba(249,115,22,0.18), 0 4px 16px rgba(0,0,0,0.08);
+        }
+        .demo-app.theme-energy .modal-header {
+            background: rgba(249,115,22,0.06);
+            border-bottom: 1px solid rgba(249,115,22,0.18);
+        }
+        .demo-app.theme-energy .modal-title {
+            color: #7c2d00;
+            font-style: italic;
+        }
+        .demo-app.theme-energy .modal-overlay.active .modal {
+            animation: energyModalIn 0.42s cubic-bezier(0.34, 1.4, 0.64, 1) forwards;
+        }
+        .demo-app.theme-energy .modal-overlay.closing .modal {
+            animation: energyModalOut 0.25s ease-in forwards;
+        }
+        @keyframes energyModalIn {
+            from { opacity: 0; transform: scale(0.88) translateY(16px); }
+            to   { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        @keyframes energyModalOut {
+            from { opacity: 1; transform: scale(1); }
+            to   { opacity: 0; transform: scale(0.92) translateY(12px); }
+        }
+        .demo-app.theme-energy .filter-btn:hover {
+            border-color: rgba(249,115,22,0.5);
+            color: #f97316;
+        }
+        .demo-app.theme-energy .demo-nav-divider {
+            background: rgba(249,115,22,0.15);
+        }
+        .demo-app.theme-energy .profile-card {
+            border: 1px solid rgba(249,115,22,0.15);
+        }
+        .demo-app.theme-energy .profile-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 28px rgba(249,115,22,0.18);
+            border-color: rgba(249,115,22,0.4);
+        }
+        .demo-app.theme-energy .profile-avatar {
+            background: linear-gradient(135deg, #f97316, #2ec4b6);
+        }
+        .demo-app.theme-energy .profile-info h4 { color: #7c2d00; }
+        .demo-app.theme-energy .profile-stat { background: rgba(253,244,227,0.8); }
+        .demo-app.theme-energy .profile-current {
+            background: rgba(249,115,22,0.1);
+            border: 1px solid rgba(249,115,22,0.15);
+        }
+        .demo-app.theme-energy .profile-current-label { color: #f97316; }
+        .demo-app.theme-energy .demo-topbar-btn {
+            background: rgba(249,115,22,0.06);
+            border-color: rgba(249,115,22,0.2);
+            color: #9a3412;
+        }
+        .demo-app.theme-energy .demo-topbar-btn:hover {
+            border-color: rgba(249,115,22,0.5);
+            color: #f97316;
+            background: rgba(249,115,22,0.12);
+        }
+        .demo-app.theme-energy .notification-item.unread {
+            border-left-color: #f97316;
+        }
+        .demo-app.theme-energy .demo-search {
+            background: rgba(249,115,22,0.06);
+            border-color: rgba(249,115,22,0.2);
+            color: #9a3412;
+        }
+
+        /* ========== FROM-BUTTON MODAL EFFECT ========== */
+        @keyframes fromBtnIn {
+            from { opacity: 0; transform: scale(0.04); }
+            60%  { opacity: 1; }
+            to   { opacity: 1; transform: scale(1); }
+        }
+        .demo-app.fx-modal-from-btn .modal-overlay.active .modal {
+            animation: fromBtnIn 0.45s cubic-bezier(0.34, 1.35, 0.64, 1) forwards !important;
+        }
+
+        /* ========== EFFECTS BUILDER UI ========== */
+        .effects-list { display: flex; flex-direction: column; gap: 7px; }
+
+        .effect-item {
+            background: var(--builder-bg);
+            border: 1px solid var(--builder-border);
+            border-radius: 8px;
+            padding: 8px 10px;
+        }
+
+        .effect-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--builder-text);
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .effect-label i { color: var(--builder-accent); font-size: 10px; }
+
+        .effect-options { display: flex; gap: 5px; }
+
+        .effect-opt {
+            flex: 1;
+            padding: 5px 0;
+            background: var(--builder-card);
+            border: 1.5px solid var(--builder-border);
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--builder-muted);
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.15s ease;
+            text-align: center;
+        }
+
+        .effect-opt:hover { border-color: #cbd5e1; color: var(--builder-text); }
+        .effect-opt.selected { border-color: var(--builder-accent); background: #eff6ff; color: var(--builder-accent); }
+
+        /* ========== FADE EFFECT ANIMATIONS ========== */
+        @keyframes fadePageIn  { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fadePageOut { from { opacity: 1; } to { opacity: 0; } }
+        @keyframes fadeModalIn  { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fadeModalOut { from { opacity: 1; } to { opacity: 0; } }
+        @keyframes fadePulseBtn { 0%, 100% { opacity: 1; } 50% { opacity: 0.42; } }
+
+        /* Button fade override */
+        .demo-app.fx-btn-fade .demo-topbar-btn:hover {
+            animation: fadePulseBtn 1.4s ease-in-out infinite !important;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+        .demo-app.fx-btn-fade .table-action:hover {
+            animation: fadePulseBtn 1.4s ease-in-out infinite !important;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+        .demo-app.fx-btn-fade .filter-btn:hover {
+            animation: fadePulseBtn 1.4s ease-in-out infinite !important;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        /* Modal open fade override */
+        .demo-app.fx-modal-open-fade .modal-overlay.active .modal {
+            animation: fadeModalIn 0.6s ease-out !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="builder-mode" id="app">
+        <!-- Builder Sidebar -->
+        <aside class="builder-sidebar">
+            <div class="builder-header">
+                <div class="builder-logo">
+                    <svg viewBox="0 0 44 44" fill="none">
+                        <defs><linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#38bdf8"/><stop offset="100%" style="stop-color:#0284c7"/></linearGradient></defs>
+                        <path d="M35 20c0-7.18-5.82-13-13-13-6.075 0-11.182 4.165-12.62 9.8C5.52 17.45 2 21.37 2 26c0 5.523 4.477 10 10 10h22c4.418 0 8-3.582 8-8 0-3.866-2.74-7.086-6.387-7.822" stroke="url(#logoGrad)" stroke-width="2.5" fill="none"/>
+                        <path d="M18 22l8-6v4h8" stroke="url(#logoGrad)" stroke-width="2" stroke-linecap="round" fill="none"/>
+                        <circle cx="38" cy="8" r="3" fill="#38bdf8"/>
+                    </svg>
+                </div>
+                <div class="builder-title"><h1>Demo Builder</h1><span>Панель разработчика</span></div>
+            </div>
+
+            <div class="builder-content">
+                <div class="builder-section">
+                    <div class="builder-section-title"><i class="fas fa-palette"></i> Стиль</div>
+                    <div class="style-grid">
+                        <div class="style-card selected" data-style="tech"><div class="style-preview tech"></div><div class="style-name">Tech</div></div>
+                        <div class="style-card" data-style="minimal"><div class="style-preview minimal"></div><div class="style-name">Минимал</div></div>
+                        <div class="style-card" data-style="energy"><div class="style-preview energy"></div><div class="style-name">Энергия</div></div>
+                    </div>
+                </div>
+
+                <div class="builder-section">
+                    <div class="builder-section-title"><i class="fas fa-industry"></i> Сфера</div>
+                    <select class="industry-select" id="industrySelect">
+                        <option value="logistics" selected>Логистика / Доставка</option>
+                        <option value="clinic" disabled>Клиника (скоро)</option>
+                        <option value="restaurant" disabled>Ресторан (скоро)</option>
+                        <option value="education" disabled>Образование (скоро)</option>
+                        <option value="services" disabled>B2B Услуги (скоро)</option>
+                    </select>
+                </div>
+
+                <div class="builder-section">
+                    <div class="builder-section-title"><i class="fas fa-th-large"></i> Разделы</div>
+                    <div class="toggle-list">
+                        <div class="toggle-item active" data-section="dashboard"><div class="toggle-icon"><i class="fas fa-chart-pie"></i></div><div class="toggle-info"><div class="toggle-name">Дашборд</div><div class="toggle-desc">Статистика</div></div><div class="toggle-switch"></div></div>
+                        <div class="toggle-item active" data-section="requests"><div class="toggle-icon"><i class="fas fa-clipboard-list"></i></div><div class="toggle-info"><div class="toggle-name">Заказы</div><div class="toggle-desc">Заявки клиентов</div></div><div class="toggle-switch"></div></div>
+                        <div class="toggle-item active" data-section="orders"><div class="toggle-icon"><i class="fas fa-box"></i></div><div class="toggle-info"><div class="toggle-name">Доставки</div><div class="toggle-desc">Заказы</div></div><div class="toggle-switch"></div></div>
+                        <div class="toggle-item active" data-section="drivers"><div class="toggle-icon"><i class="fas fa-id-card"></i></div><div class="toggle-info"><div class="toggle-name">Водители</div><div class="toggle-desc">Персонал</div></div><div class="toggle-switch"></div></div>
+                        <div class="toggle-item active" data-section="map"><div class="toggle-icon"><i class="fas fa-map-marked-alt"></i></div><div class="toggle-info"><div class="toggle-name">Карта</div><div class="toggle-desc">Трекинг</div></div><div class="toggle-switch"></div></div>
+                        <div class="toggle-item active" data-section="warehouse"><div class="toggle-icon"><i class="fas fa-warehouse"></i></div><div class="toggle-info"><div class="toggle-name">Склад</div><div class="toggle-desc">Товары</div></div><div class="toggle-switch"></div></div>
+                        <div class="toggle-item active" data-section="clients"><div class="toggle-icon"><i class="fas fa-users"></i></div><div class="toggle-info"><div class="toggle-name">Клиенты</div><div class="toggle-desc">База</div></div><div class="toggle-switch"></div></div>
+                        <div class="toggle-item active" data-section="analytics"><div class="toggle-icon"><i class="fas fa-chart-bar"></i></div><div class="toggle-info"><div class="toggle-name">Аналитика</div><div class="toggle-desc">Отчёты</div></div><div class="toggle-switch"></div></div>
+                        <div class="toggle-item active" data-section="settings"><div class="toggle-icon"><i class="fas fa-cog"></i></div><div class="toggle-info"><div class="toggle-name">Настройки</div><div class="toggle-desc">Конфиг</div></div><div class="toggle-switch"></div></div>
+                    </div>
+                </div>
+
+                <div class="builder-section">
+                    <div class="builder-section-title"><i class="fas fa-plug"></i> Функции</div>
+                    <div class="toggle-list">
+                        <div class="toggle-item active" data-feature="notifications"><div class="toggle-icon"><i class="fas fa-bell"></i></div><div class="toggle-info"><div class="toggle-name">Уведомления</div><div class="toggle-desc">Push, SMS, Telegram</div></div><div class="toggle-switch"></div></div>
+                        <div class="toggle-item active" data-feature="gps"><div class="toggle-icon"><i class="fas fa-satellite"></i></div><div class="toggle-info"><div class="toggle-name">GPS-трекинг</div><div class="toggle-desc">Отслеживание</div></div><div class="toggle-switch"></div></div>
+                        <div class="toggle-item active" data-feature="routes"><div class="toggle-icon"><i class="fas fa-route"></i></div><div class="toggle-info"><div class="toggle-name">Оптимизация маршрутов</div><div class="toggle-desc">AI-планирование</div></div><div class="toggle-switch"></div></div>
+                        <div class="toggle-item active" data-feature="reports"><div class="toggle-icon"><i class="fas fa-file-excel"></i></div><div class="toggle-info"><div class="toggle-name">Экспорт отчётов</div><div class="toggle-desc">Excel, PDF</div></div><div class="toggle-switch"></div></div>
+                    </div>
+                </div>
+
+                <div class="builder-section">
+                    <div class="builder-section-title"><i class="fas fa-magic"></i> Эффекты</div>
+                    <div class="effects-list">
+                        <div class="effect-item">
+                            <div class="effect-label"><i class="fas fa-mouse-pointer"></i> Кнопки действия</div>
+                            <div class="effect-options">
+                                <button class="effect-opt selected" data-effect="actionButtons" data-val="pulse">Пульс</button>
+                                <button class="effect-opt" data-effect="actionButtons" data-val="fade">Затухание</button>
+                            </div>
+                        </div>
+                        <div class="effect-item">
+                            <div class="effect-label"><i class="fas fa-window-restore"></i> Открытие окон</div>
+                            <div class="effect-options">
+                                <button class="effect-opt selected" data-effect="modalOpen" data-val="slide">Слайд</button>
+                                <button class="effect-opt" data-effect="modalOpen" data-val="fade">Затухание</button>
+                                <button class="effect-opt" data-effect="modalOpen" data-val="fromBtn">От кнопки</button>
+                            </div>
+                        </div>
+                        <div class="effect-item">
+                            <div class="effect-label"><i class="fas fa-times-circle"></i> Закрытие окон</div>
+                            <div class="effect-options">
+                                <button class="effect-opt selected" data-effect="modalClose" data-val="thanos">Танос</button>
+                                <button class="effect-opt" data-effect="modalClose" data-val="fade">Затухание</button>
+                            </div>
+                        </div>
+                        <div class="effect-item">
+                            <div class="effect-label"><i class="fas fa-random"></i> Смена разделов</div>
+                            <div class="effect-options">
+                                <button class="effect-opt selected" data-effect="pageTransition" data-val="reveal">Разрыв</button>
+                                <button class="effect-opt" data-effect="pageTransition" data-val="fade">Затухание</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="builder-footer">
+                <button class="btn-launch" onclick="openClientView()"><i class="fas fa-external-link-alt"></i>Открыть для клиента</button>
+            </div>
+        </aside>
+
+        <!-- Preview -->
+        <div class="builder-preview">
+            <div class="preview-frame">
+                <div class="demo-app theme-tech">
+                    <div class="nav-backdrop" id="navBackdrop" onclick="closeNav()"></div>
+
+                    <!-- Tech Glassmorphism Nav Overlay -->
+                    <div class="tech-nav-overlay" id="techNavOverlay">
+                        <div class="tech-nav-glass">
+                            <div class="tech-nav-header">
+                                <div class="tech-nav-logo">
+                                    <div class="tech-nav-logo-icon"><i class="fas fa-truck"></i></div>
+                                    TransExpress
+                                </div>
+                                <div class="tech-nav-close" onclick="closeNav()"><i class="fas fa-times"></i></div>
+                            </div>
+                            <div class="tech-nav-grid">
+                                <div class="tech-nav-btn active" data-tnav="dashboard" onclick="showPage('dashboard',true,event)"><i class="fas fa-chart-pie"></i>Дашборд</div>
+                                <div class="tech-nav-btn" data-tnav="requests" onclick="showPage('requests',true,event)"><i class="fas fa-clipboard-list"></i>Заказы<span class="tech-nav-badge2">3</span></div>
+                                <div class="tech-nav-btn" data-tnav="orders" onclick="showPage('orders',true,event)"><i class="fas fa-box"></i>Доставки<span class="tech-nav-badge2">12</span></div>
+                                <div class="tech-nav-btn" data-tnav="drivers" onclick="showPage('drivers',true,event)"><i class="fas fa-id-card"></i>Водители</div>
+                                <div class="tech-nav-btn" data-tnav="map" onclick="showPage('map',true,event)"><i class="fas fa-map-marked-alt"></i>Карта</div>
+                                <div class="tech-nav-btn" data-tnav="warehouse" onclick="showPage('warehouse',true,event)"><i class="fas fa-warehouse"></i>Склад</div>
+                                <div class="tech-nav-btn" data-tnav="clients" onclick="showPage('clients',true,event)"><i class="fas fa-users"></i>Клиенты</div>
+                                <div class="tech-nav-btn" data-tnav="analytics" onclick="showPage('analytics',true,event)"><i class="fas fa-chart-bar"></i>Аналитика</div>
+                                <div class="tech-nav-btn" data-tnav="settings" onclick="showPage('settings',true,event)"><i class="fas fa-cog"></i>Настройки</div>
+                            </div>
+                            <div class="tech-nav-footer">
+                                <div class="tech-nav-user-ava">АК</div>
+                                <div><div class="tech-nav-user-name">Алишер Каримов</div><div class="tech-nav-user-role">Администратор</div></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sidebar -->
+                    <aside class="demo-sidebar" id="demoSidebar">
+                        <div class="demo-logo"><div class="demo-logo-icon"><i class="fas fa-truck"></i></div><span class="demo-logo-text">TransExpress</span></div>
+                        <nav class="demo-nav">
+                            <div class="demo-nav-item active" data-nav="dashboard" onclick="showPage('dashboard',true,event)"><i class="fas fa-chart-pie"></i><span>Дашборд</span></div>
+                            <div class="demo-nav-item" data-nav="requests" onclick="showPage('requests',true,event)"><i class="fas fa-clipboard-list"></i><span>Заказы</span><span class="demo-nav-badge">3</span></div>
+                            <div class="demo-nav-item" data-nav="orders" onclick="showPage('orders',true,event)"><i class="fas fa-box"></i><span>Доставки</span><span class="demo-nav-badge">12</span></div>
+                            <div class="demo-nav-item" data-nav="drivers" onclick="showPage('drivers',true,event)"><i class="fas fa-id-card"></i><span>Водители</span></div>
+                            <div class="demo-nav-item" data-nav="map" onclick="showPage('map',true,event)"><i class="fas fa-map-marked-alt"></i><span>Карта</span></div>
+                            <div class="demo-nav-divider"></div>
+                            <div class="demo-nav-item" data-nav="warehouse" onclick="showPage('warehouse',true,event)"><i class="fas fa-warehouse"></i><span>Склад</span></div>
+                            <div class="demo-nav-item" data-nav="clients" onclick="showPage('clients',true,event)"><i class="fas fa-users"></i><span>Клиенты</span></div>
+                            <div class="demo-nav-item" data-nav="analytics" onclick="showPage('analytics',true,event)"><i class="fas fa-chart-bar"></i><span>Аналитика</span></div>
+                            <div class="demo-nav-divider"></div>
+                            <div class="demo-nav-item" data-nav="settings" onclick="showPage('settings',true,event)"><i class="fas fa-cog"></i><span>Настройки</span></div>
+                        </nav>
+                        <div class="demo-user"><div class="demo-user-avatar">АК</div><div class="demo-user-info"><div class="demo-user-name">Алишер Каримов</div><div class="demo-user-role">Администратор</div></div></div>
+                    </aside>
+
+                    <!-- Main -->
+                    <main class="demo-main">
+                        <div class="demo-topbar">
+                            <button class="nav-toggle-btn" id="navToggle" onclick="toggleNav()"><i class="fas fa-bars"></i></button>
+                            <div class="demo-breadcrumb">Главная / <b id="currentPageTitle">Дашборд</b></div>
+                            <div class="demo-search"><i class="fas fa-search"></i><span>Поиск...</span></div>
+                            <div class="demo-topbar-actions">
+                                <div class="demo-topbar-btn" onclick="toggleNotifications()"><i class="fas fa-bell"></i><span class="badge">5</span></div>
+                                <div class="demo-topbar-btn"><i class="fas fa-envelope"></i><span class="badge">2</span></div>
+                            </div>
+                        </div>
+
+                        <div class="demo-page">
+                            <!-- Dashboard -->
+                            <div class="demo-page-content active" id="page-dashboard">
+                                <div class="demo-page-header">
+                                    <div class="demo-page-title"><h1>Дашборд</h1><p class="demo-page-subtitle">Обзор за сегодня, 10 июня 2026</p></div>
+                                    <div class="demo-page-actions">
+                                        <button class="demo-btn demo-btn-primary" onclick="openModal('newOrder', event)"><i class="fas fa-plus"></i>Новая доставка</button>
+                                    </div>
+                                </div>
+                                <div class="stats-grid">
+                                    <div class="stat-card" onclick="goToOrdersToday(event)">
+                                        <div class="stat-header"><span class="stat-label">Доставок сегодня</span><div class="stat-icon"><i class="fas fa-box"></i></div></div>
+                                        <div class="stat-value">47</div>
+                                        <div class="stat-change"><i class="fas fa-arrow-up"></i>+12% к вчера</div>
+                                    </div>
+                                    <div class="stat-card" onclick="goToMap(event)">
+                                        <div class="stat-header"><span class="stat-label">В пути</span><div class="stat-icon orange"><i class="fas fa-truck"></i></div></div>
+                                        <div class="stat-value">12</div>
+                                        <div class="stat-change negative"><i class="fas fa-arrow-down"></i>-3 к вчера</div>
+                                    </div>
+                                    <div class="stat-card" onclick="goToDriversOnShift(event)">
+                                        <div class="stat-header"><span class="stat-label">Активных водителей</span><div class="stat-icon green"><i class="fas fa-user"></i></div></div>
+                                        <div class="stat-value">8</div>
+                                        <div class="stat-change">из 10 всего</div>
+                                    </div>
+                                </div>
+                                <div class="cards-row">
+                                    <div class="data-card">
+                                        <div class="data-header"><span class="data-title">Последние доставки</span></div>
+                                        <table class="data-table">
+                                            <thead><tr><th>ID</th><th>Клиент</th><th>Адрес</th><th>Водитель</th><th>Статус</th><th></th></tr></thead>
+                                            <tbody>
+                                                <tr><td class="table-id">#TX-2847</td><td>ООО "Технопарк"</td><td>ул. Навои, 42</td><td>Азиз Р.</td><td><span class="table-status blue">В пути</span></td><td><div class="table-actions"><button class="table-action" onclick="openOrderDetail(0)"><i class="fas fa-eye"></i></button></div></td></tr>
+                                                <tr><td class="table-id">#TX-2846</td><td>Саидов Алишер</td><td>Чиланзар, 9 кв</td><td>Бахром К.</td><td><span class="table-status green">Доставлен</span></td><td><div class="table-actions"><button class="table-action" onclick="openOrderDetail(1)"><i class="fas fa-eye"></i></button></div></td></tr>
+                                                <tr><td class="table-id">#TX-2845</td><td>MegaStore</td><td>ТЦ Мега, зона C</td><td>—</td><td><span class="table-status orange">Ожидает</span></td><td><div class="table-actions"><button class="table-action" onclick="openModal('assignDriver', event)"><i class="fas fa-user-plus"></i></button></div></td></tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="data-card">
+                                        <div class="data-header"><span class="data-title">Активность</span></div>
+                                        <div class="activity-list">
+                                            <div class="activity-item"><div class="activity-icon green"><i class="fas fa-check"></i></div><div class="activity-content"><div class="activity-text"><strong>#TX-2846</strong> доставлен</div><div class="activity-time">5 мин назад</div></div></div>
+                                            <div class="activity-item"><div class="activity-icon"><i class="fas fa-truck"></i></div><div class="activity-content"><div class="activity-text"><strong>Азиз Р.</strong> выехал на маршрут</div><div class="activity-time">12 мин назад</div></div></div>
+                                            <div class="activity-item"><div class="activity-icon orange"><i class="fas fa-exclamation"></i></div><div class="activity-content"><div class="activity-text"><strong>#TX-2845</strong> ожидает</div><div class="activity-time">18 мин назад</div></div></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Requests (Заказы) -->
+                            <div class="demo-page-content" id="page-requests">
+                                <div class="demo-page-header">
+                                    <div class="demo-page-title"><h1>Заказы</h1><p class="demo-page-subtitle" id="requestsSubtitle">Заявки от клиентов</p></div>
+                                    <div class="demo-page-actions">
+                                        <button class="demo-btn demo-btn-primary" onclick="openModal('newRequest', event)"><i class="fas fa-plus"></i>Новая заявка</button>
+                                    </div>
+                                </div>
+                                <div class="data-card">
+                                    <table class="data-table" id="requestsTable">
+                                        <thead>
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>Клиент</th>
+                                                <th>Товар / Описание</th>
+                                                <th>Адрес доставки</th>
+                                                <th>Дата заявки</th>
+                                                <th>Статус</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="requestsTableBody"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- Orders -->
+                            <div class="demo-page-content" id="page-orders">
+                                <div class="demo-page-header">
+                                    <div class="demo-page-title"><h1>Доставки</h1><p class="demo-page-subtitle" id="ordersSubtitle">47 заказов за сегодня</p></div>
+                                    <div class="demo-page-actions">
+                                        <button class="demo-btn demo-btn-primary" onclick="openModal('newOrder', event)"><i class="fas fa-plus"></i>Новая доставка</button>
+                                    </div>
+                                </div>
+                                <div class="filters-bar" id="ordersFiltersBar">
+                                    <button class="filter-btn" id="clearFiltersBtn" onclick="clearAllFilters()" style="display: none;"><i class="fas fa-filter-circle-xmark"></i>Сбросить</button>
+                                    <div id="activeFilterTags"></div>
+                                </div>
+                                <div class="data-card">
+                                    <table class="data-table" id="ordersTable">
+                                        <thead>
+                                            <tr>
+                                                <th onclick="toggleFilter(this, 'id')">ID <i class="fas fa-filter filter-icon"></i></th>
+                                                <th onclick="toggleFilter(this, 'client')">Клиент <i class="fas fa-filter filter-icon"></i></th>
+                                                <th onclick="toggleFilter(this, 'from')">Откуда <i class="fas fa-filter filter-icon"></i></th>
+                                                <th onclick="toggleFilter(this, 'to')">Куда <i class="fas fa-filter filter-icon"></i></th>
+                                                <th onclick="toggleFilter(this, 'driver')">Водитель <i class="fas fa-filter filter-icon"></i></th>
+                                                <th onclick="toggleFilter(this, 'status')">Статус <i class="fas fa-filter filter-icon"></i></th>
+                                                <th>ETA</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="ordersTableBody"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- Drivers -->
+                            <div class="demo-page-content" id="page-drivers">
+                                <div class="demo-page-header">
+                                    <div class="demo-page-title"><h1>Водители</h1><p class="demo-page-subtitle" id="driversSubtitle">8 активных из 10</p></div>
+                                    <div class="demo-page-actions">
+                                        <button class="demo-btn demo-btn-primary" onclick="openModal('newDriver', event)"><i class="fas fa-plus"></i>Добавить</button>
+                                    </div>
+                                </div>
+                                <div class="filters-bar" id="driversFiltersBar">
+                                    <div class="date-range-filter">
+                                        <i class="fas fa-calendar"></i>
+                                        <input type="date" id="driversDateFrom" value="2026-06-01">
+                                        <span>—</span>
+                                        <input type="date" id="driversDateTo" value="2026-06-10">
+                                    </div>
+                                    <button class="filter-btn" id="driverStatusFilter" onclick="toggleDriverStatusFilter()"><i class="fas fa-circle"></i>На смене</button>
+                                    <button class="filter-btn" id="clearDriversFilters" onclick="clearDriverFilters()" style="display: none;"><i class="fas fa-filter-circle-xmark"></i>Сбросить</button>
+                                </div>
+                                <div class="cards-grid" id="driversGrid"></div>
+                            </div>
+
+                            <!-- Map -->
+                            <div class="demo-page-content" id="page-map">
+                                <div class="demo-page-header">
+                                    <div class="demo-page-title"><h1>Карта</h1><p class="demo-page-subtitle">Транспорт в пути</p></div>
+                                </div>
+                                <div class="filters-bar" id="mapFiltersBar">
+                                    <button class="filter-btn" onclick="toggleMapFilter('vehicle')"><i class="fas fa-car"></i>Госномер</button>
+                                    <button class="filter-btn" onclick="toggleMapFilter('driver')"><i class="fas fa-user"></i>Водитель</button>
+                                    <button class="filter-btn" onclick="toggleMapFilter('client')"><i class="fas fa-building"></i>Контрагент</button>
+                                </div>
+                                <div class="map-card">
+                                    <div class="map-container">
+                                        <div class="map-grid"></div>
+                                        <div class="map-vehicle" style="left: 25%; top: 35%;" data-driver="Азиз Р." data-plate="01 A 777 BC"><i class="fas fa-truck"></i></div>
+                                        <div class="map-vehicle" style="left: 55%; top: 50%;" data-driver="Сардор М." data-plate="01 B 123 CD"><i class="fas fa-truck"></i></div>
+                                        <div class="map-vehicle" style="left: 70%; top: 30%;" data-driver="Дилшод Р." data-plate="01 C 456 EF"><i class="fas fa-truck"></i></div>
+                                        <div class="map-destination" style="left: 35%; top: 45%;"><i class="fas fa-flag"></i></div>
+                                        <div class="map-destination" style="left: 75%; top: 55%;"><i class="fas fa-flag"></i></div>
+                                        <div class="map-destination" style="left: 60%; top: 25%;"><i class="fas fa-flag"></i></div>
+                                        <div class="map-legend"><div class="legend-title">Легенда</div><div class="legend-items"><div class="legend-item"><div class="legend-dot active"></div>В пути</div><div class="legend-item"><div class="legend-dot dest"></div>Точка доставки</div></div></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Warehouse -->
+                            <div class="demo-page-content" id="page-warehouse">
+                                <div class="demo-page-header">
+                                    <div class="demo-page-title"><h1>Склад</h1><p class="demo-page-subtitle">Товары и остатки</p></div>
+                                    <div class="demo-page-actions">
+                                        <button class="demo-btn demo-btn-secondary"><i class="fas fa-plus"></i>Поступление</button>
+                                        <button class="demo-btn demo-btn-primary"><i class="fas fa-cube"></i>Новый товар</button>
+                                    </div>
+                                </div>
+                                <div class="stats-grid">
+                                    <div class="stat-card"><div class="stat-header"><span class="stat-label">Всего товаров</span><div class="stat-icon"><i class="fas fa-cubes"></i></div></div><div class="stat-value">1,247</div><div class="stat-change">позиций</div></div>
+                                    <div class="stat-card"><div class="stat-header"><span class="stat-label">На складе</span><div class="stat-icon green"><i class="fas fa-warehouse"></i></div></div><div class="stat-value">18.4M</div><div class="stat-change">сум</div></div>
+                                    <div class="stat-card"><div class="stat-header"><span class="stat-label">Низкий остаток</span><div class="stat-icon orange"><i class="fas fa-exclamation-triangle"></i></div></div><div class="stat-value">8</div><div class="stat-change negative">требует внимания</div></div>
+                                </div>
+                                <div class="data-card">
+                                    <table class="data-table">
+                                        <thead><tr><th>Артикул</th><th>Название</th><th>Категория</th><th>Цена</th><th>Остаток</th><th>Статус</th></tr></thead>
+                                        <tbody>
+                                            <tr><td class="table-id">WH-001</td><td>Кофе зерновой Arabica 1кг</td><td>Кофе</td><td>128 000</td><td>247</td><td><span class="table-status green">В норме</span></td></tr>
+                                            <tr><td class="table-id">WH-002</td><td>Молоко 3.2% UHT 1л</td><td>Молочное</td><td>12 500</td><td>18</td><td><span class="table-status orange">Мало</span></td></tr>
+                                            <tr><td class="table-id">WH-003</td><td>Сироп ванильный 750мл</td><td>Сиропы</td><td>64 000</td><td>64</td><td><span class="table-status green">В норме</span></td></tr>
+                                            <tr><td class="table-id">WH-005</td><td>Чай зелёный Sencha 500г</td><td>Чай</td><td>92 000</td><td>5</td><td><span class="table-status red">Критично</span></td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- Clients -->
+                            <div class="demo-page-content" id="page-clients">
+                                <div class="demo-page-header">
+                                    <div class="demo-page-title"><h1>Клиенты</h1><p class="demo-page-subtitle">284 клиента</p></div>
+                                    <div class="demo-page-actions"><button class="demo-btn demo-btn-primary" onclick="openModal('newClient', event)"><i class="fas fa-plus"></i>Новый клиент</button></div>
+                                </div>
+                                <div class="data-card">
+                                    <table class="data-table">
+                                        <thead><tr><th>Клиент</th><th>Тип</th><th>Контакт</th><th>Адрес</th><th>Заказов</th><th></th></tr></thead>
+                                        <tbody>
+                                            <tr><td>ООО "Технопарк"</td><td>Юрлицо</td><td>+998 71 234 56 78</td><td>ул. Навои, 42</td><td>47</td><td><div class="table-actions"><button class="table-action"><i class="fas fa-eye"></i></button><button class="table-action"><i class="fas fa-edit"></i></button></div></td></tr>
+                                            <tr><td>MegaStore</td><td>Юрлицо</td><td>+998 71 345 67 89</td><td>ТЦ Мега, зона C</td><td>128</td><td><div class="table-actions"><button class="table-action"><i class="fas fa-eye"></i></button><button class="table-action"><i class="fas fa-edit"></i></button></div></td></tr>
+                                            <tr><td>Саидов Алишер</td><td>Физлицо</td><td>+998 90 123 45 67</td><td>Чиланзар, 9 кв</td><td>5</td><td><div class="table-actions"><button class="table-action"><i class="fas fa-eye"></i></button><button class="table-action"><i class="fas fa-edit"></i></button></div></td></tr>
+                                            <tr><td>IP Каримов</td><td>ИП</td><td>+998 93 456 78 90</td><td>Мирзо Улугбек, 15</td><td>23</td><td><div class="table-actions"><button class="table-action"><i class="fas fa-eye"></i></button><button class="table-action"><i class="fas fa-edit"></i></button></div></td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- Analytics -->
+                            <div class="demo-page-content" id="page-analytics">
+                                <div class="demo-page-header">
+                                    <div class="demo-page-title"><h1>Аналитика</h1><p class="demo-page-subtitle">Отчёты</p></div>
+                                    <div class="demo-page-actions"><button class="demo-btn demo-btn-primary"><i class="fas fa-download"></i>Экспорт</button></div>
+                                </div>
+                                <div class="stats-grid">
+                                    <div class="stat-card"><div class="stat-header"><span class="stat-label">Доставок за месяц</span><div class="stat-icon"><i class="fas fa-box"></i></div></div><div class="stat-value">1,247</div><div class="stat-change"><i class="fas fa-arrow-up"></i>+18%</div></div>
+                                    <div class="stat-card"><div class="stat-header"><span class="stat-label">Выручка</span><div class="stat-icon green"><i class="fas fa-dollar-sign"></i></div></div><div class="stat-value">78.4M</div><div class="stat-change"><i class="fas fa-arrow-up"></i>+12%</div></div>
+                                    <div class="stat-card"><div class="stat-header"><span class="stat-label">Новых клиентов</span><div class="stat-icon orange"><i class="fas fa-user-plus"></i></div></div><div class="stat-value">34</div><div class="stat-change"><i class="fas fa-arrow-up"></i>+8%</div></div>
+                                </div>
+                            </div>
+
+                            <!-- Settings -->
+                            <div class="demo-page-content" id="page-settings">
+                                <div class="demo-page-header">
+                                    <div class="demo-page-title"><h1>Настройки</h1><p class="demo-page-subtitle">Конфигурация</p></div>
+                                </div>
+                                <div class="data-card" style="padding: 16px;">
+                                    <h3 style="font-size: 12px; margin-bottom: 12px; color: var(--demo-text);"><i class="fas fa-building" style="margin-right: 6px; color: var(--demo-accent);"></i>Компания</h3>
+                                    <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 8px; font-size: 11px;">
+                                        <span style="color: var(--demo-text-muted);">Название:</span><span style="color: var(--demo-text);">TransExpress LLC</span>
+                                        <span style="color: var(--demo-text-muted);">ИНН:</span><span style="color: var(--demo-text);">123456789</span>
+                                        <span style="color: var(--demo-text-muted);">Адрес:</span><span style="color: var(--demo-text);">Ташкент, ул. Амира Темура, 1</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </main>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notifications -->
+    <div class="notifications-panel" id="notificationsPanel">
+        <div class="notifications-header"><h3>Уведомления</h3><button class="modal-close" onclick="toggleNotifications()"><i class="fas fa-times"></i></button></div>
+        <div class="notifications-body">
+            <div class="notification-item unread" onclick="openNotification('requests', 'ZK-0124', event)"><div class="notification-title">Новый заказ</div><div class="notification-text">MegaStore создал заявку #ZK-0124 на 20 позиций</div><div class="notification-time">2 мин назад</div></div>
+            <div class="notification-item unread" onclick="openNotification('requests', 'ZK-0123', event)"><div class="notification-title">Заявка ожидает подтверждения</div><div class="notification-text">#ZK-0123 от ООО "Технопарк" — ответьте клиенту</div><div class="notification-time">8 мин назад</div></div>
+            <div class="notification-item unread" onclick="openNotification('orders', 'TX-2846', event)"><div class="notification-title">Доставка завершена</div><div class="notification-text">#TX-2846 доставлен клиенту Саидов Алишер</div><div class="notification-time">5 мин назад</div></div>
+            <div class="notification-item" onclick="openNotification('orders', 'TX-2847', event)"><div class="notification-title">Водитель выехал</div><div class="notification-text">#TX-2847 — Азиз Р. в пути на Навои, 42</div><div class="notification-time">12 мин назад</div></div>
+            <div class="notification-item" onclick="openNotification('drivers', 'АР', event)"><div class="notification-title">Водитель вышел на смену</div><div class="notification-text">Азиз Рахимов начал смену, авто 01 A 777 BC</div><div class="notification-time">1 ч назад</div></div>
+            <div class="notification-item" onclick="openNotification('drivers', 'БК', event)"><div class="notification-title">Водитель завершил смену</div><div class="notification-text">Бахром Касымов — 4 выезда, смена закрыта</div><div class="notification-time">3 ч назад</div></div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div class="modal-overlay" id="modal-newOrder">
+        <div class="modal">
+            <div class="modal-header"><h3 class="modal-title" id="newOrderTitle">Новая доставка</h3><button class="modal-close" onclick="closeModal('newOrder')"><i class="fas fa-times"></i></button></div>
+            <div class="modal-body">
+                <div class="form-group"><label class="form-label">Клиент</label><input type="text" class="form-input" id="newOrderClient" placeholder="Клиент"></div>
+                <div class="form-group"><label class="form-label">Склад</label><select class="form-input form-select"><option>Склад-1 (Центр)</option><option>Склад-2 (Юнусабад)</option><option>Склад-3 (Чиланзар)</option></select></div>
+                <div class="form-group"><label class="form-label">Адрес доставки</label><input type="text" class="form-input" id="newOrderAddress" placeholder="ул. Навои, 42"></div>
+                <div class="form-group"><label class="form-label">Водитель</label><select class="form-input form-select"><option>Авто</option><option>Азиз Р.</option><option>Бахром К.</option><option>Сардор М.</option></select></div>
+            </div>
+            <div class="modal-footer"><button class="demo-btn demo-btn-secondary" onclick="closeModal('newOrder')">Отмена</button><button class="demo-btn demo-btn-primary" onclick="closeModal('newOrder')">Создать</button></div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modal-viewOrder">
+        <div class="modal" style="max-width:520px;">
+            <div class="modal-header"><h3 class="modal-title" id="viewOrderTitle">Доставка</h3><button class="modal-close" onclick="closeModal('viewOrder')"><i class="fas fa-times"></i></button></div>
+            <div class="modal-body" id="viewOrderBody" style="max-height:65vh;overflow-y:auto;"></div>
+            <div class="modal-footer" id="viewOrderFooter"></div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modal-assignDriver">
+        <div class="modal">
+            <div class="modal-header"><h3 class="modal-title">Назначить водителя</h3><button class="modal-close" onclick="closeModal('assignDriver')"><i class="fas fa-times"></i></button></div>
+            <div class="modal-body">
+                <div class="form-group"><label class="form-label">Заказ</label><div style="padding: 8px; background: var(--demo-bg); border-radius: 6px; font-size: 11px; color: var(--demo-text);">#TX-2845 — MegaStore → ТЦ Мега</div></div>
+                <div class="form-group"><label class="form-label">Водитель</label><select class="form-input form-select"><option>Бахром Касымов (Свободен)</option><option>Фаррух Шарипов (Свободен)</option></select></div>
+            </div>
+            <div class="modal-footer"><button class="demo-btn demo-btn-secondary" onclick="closeModal('assignDriver')">Отмена</button><button class="demo-btn demo-btn-primary" onclick="closeModal('assignDriver')">Назначить</button></div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modal-newClient">
+        <div class="modal">
+            <div class="modal-header"><h3 class="modal-title">Новый клиент</h3><button class="modal-close" onclick="closeModal('newClient')"><i class="fas fa-times"></i></button></div>
+            <div class="modal-body">
+                <div class="form-group"><label class="form-label">Тип</label><select class="form-input form-select"><option>Юрлицо</option><option>ИП</option><option>Физлицо</option></select></div>
+                <div class="form-group"><label class="form-label">Название</label><input type="text" class="form-input" placeholder="ООО 'Компания'"></div>
+                <div class="form-group"><label class="form-label">Телефон</label><input type="text" class="form-input" placeholder="+998 71 234 56 78"></div>
+                <div class="form-group"><label class="form-label">Адрес</label><input type="text" class="form-input" placeholder="г. Ташкент, ул. ..."></div>
+            </div>
+            <div class="modal-footer"><button class="demo-btn demo-btn-secondary" onclick="closeModal('newClient')">Отмена</button><button class="demo-btn demo-btn-primary" onclick="closeModal('newClient')">Создать</button></div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modal-newDriver">
+        <div class="modal">
+            <div class="modal-header"><h3 class="modal-title">Новый водитель</h3><button class="modal-close" onclick="closeModal('newDriver')"><i class="fas fa-times"></i></button></div>
+            <div class="modal-body">
+                <div class="form-group"><label class="form-label">ФИО</label><input type="text" class="form-input" placeholder="Иванов Иван"></div>
+                <div class="form-group"><label class="form-label">Телефон</label><input type="text" class="form-input" placeholder="+998 90 123 45 67"></div>
+                <div class="form-group"><label class="form-label">Госномер авто</label><input type="text" class="form-input" placeholder="01 A 123 BC"></div>
+            </div>
+            <div class="modal-footer"><button class="demo-btn demo-btn-secondary" onclick="closeModal('newDriver')">Отмена</button><button class="demo-btn demo-btn-primary" onclick="closeModal('newDriver')">Добавить</button></div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modal-newRequest">
+        <div class="modal">
+            <div class="modal-header"><h3 class="modal-title">Новая заявка</h3><button class="modal-close" onclick="closeModal('newRequest')"><i class="fas fa-times"></i></button></div>
+            <div class="modal-body">
+                <div class="form-group"><label class="form-label">Клиент</label><select class="form-input form-select"><option>Выберите</option><option>ООО "Технопарк"</option><option>MegaStore</option><option>IP Каримов</option><option>Ресторан "Плов"</option></select></div>
+                <div class="form-group"><label class="form-label">Товар / Описание</label><input type="text" class="form-input" placeholder="Кофе Arabica 1кг × 20"></div>
+                <div class="form-group"><label class="form-label">Адрес доставки</label><input type="text" class="form-input" placeholder="г. Ташкент, ул. ..."></div>
+                <div class="form-group"><label class="form-label">Желаемая дата</label><input type="date" class="form-input" value="2026-06-11"></div>
+                <div class="form-group"><label class="form-label">Комментарий</label><input type="text" class="form-input" placeholder="Особые условия доставки..."></div>
+            </div>
+            <div class="modal-footer"><button class="demo-btn demo-btn-secondary" onclick="closeModal('newRequest')">Отмена</button><button class="demo-btn demo-btn-primary" onclick="closeModal('newRequest')"><i class="fas fa-save"></i>Создать заявку</button></div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modal-convertRequest">
+        <div class="modal">
+            <div class="modal-header"><h3 class="modal-title" id="convertModalTitle">Оформить доставку</h3><button class="modal-close" onclick="closeModal('convertRequest')"><i class="fas fa-times"></i></button></div>
+            <div class="modal-body">
+                <input type="hidden" id="convertIdx" value="">
+                <div style="padding: 8px 0 12px; font-size: 11px; color: var(--demo-text-secondary);">Заявка будет переведена в статус <strong style="color: var(--demo-accent);">В обработке</strong> и создана доставка.</div>
+                <div class="form-group"><label class="form-label">Заявка</label><div id="convertRequestInfo" style="padding: 8px; background: var(--demo-bg); border-radius: 6px; font-size: 11px; color: var(--demo-text);"></div></div>
+                <div class="form-group"><label class="form-label">Склад отправки</label><select class="form-input form-select"><option>Склад-1 (Центр)</option><option>Склад-2 (Юнусабад)</option><option>Склад-3 (Чиланзар)</option></select></div>
+                <div class="form-group"><label class="form-label">Водитель</label><select class="form-input form-select"><option>Авто-назначение</option><option>Азиз Р. (На маршруте)</option><option>Бахром К. (Свободен)</option><option>Фаррух Ш. (Свободен)</option></select></div>
+                <div class="form-group"><label class="form-label">Дата доставки</label><input type="date" class="form-input" value="2026-06-11"></div>
+            </div>
+            <div class="modal-footer"><button class="demo-btn demo-btn-secondary" onclick="closeModal('convertRequest')">Отмена</button><button class="demo-btn demo-btn-primary" onclick="confirmConvert()"><i class="fas fa-check-circle"></i>Оформить доставку</button></div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modal-editOrder">
+        <div class="modal">
+            <div class="modal-header"><h3 class="modal-title" id="editOrderTitle">Редактировать доставку</h3><button class="modal-close" onclick="closeModal('editOrder')"><i class="fas fa-times"></i></button></div>
+            <div class="modal-body">
+                <input type="hidden" id="editOrderIdx">
+                <div class="form-group"><label class="form-label">Статус</label>
+                    <select class="form-input form-select" id="editOrderStatus">
+                        <option value="Ожидает">Ожидает</option>
+                        <option value="В пути">В пути</option>
+                        <option value="Доставлен">Доставлен</option>
+                        <option value="Отменён">Отменён</option>
+                    </select>
+                </div>
+                <div class="form-group"><label class="form-label">Водитель</label>
+                    <select class="form-input form-select" id="editOrderDriver">
+                        <option value="—">—</option>
+                        <option value="Азиз Р.">Азиз Р.</option>
+                        <option value="Бахром К.">Бахром К.</option>
+                        <option value="Сардор М.">Сардор М.</option>
+                        <option value="Дилшод Р.">Дилшод Р.</option>
+                        <option value="Жавлон А.">Жавлон А.</option>
+                        <option value="Фаррух Ш.">Фаррух Ш.</option>
+                    </select>
+                </div>
+                <div class="form-group"><label class="form-label">ETA (время прибытия)</label>
+                    <input type="time" class="form-input" id="editOrderEta" placeholder="14:30">
+                </div>
+            </div>
+            <div class="modal-footer"><button class="demo-btn demo-btn-secondary" onclick="closeModal('editOrder')">Отмена</button><button class="demo-btn demo-btn-primary" onclick="saveEditOrder()"><i class="fas fa-save"></i>Сохранить</button></div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modal-confirmDelete">
+        <div class="modal" style="max-width:360px;">
+            <div class="modal-header"><h3 class="modal-title"><i class="fas fa-exclamation-triangle" style="color:var(--demo-red);margin-right:8px;"></i>Подтверждение</h3><button class="modal-close" onclick="closeModal('confirmDelete')"><i class="fas fa-times"></i></button></div>
+            <div class="modal-body" style="padding:16px 20px;">
+                <p id="confirmDeleteText" style="font-size:13px;color:var(--demo-text-secondary);line-height:1.6;"></p>
+            </div>
+            <div class="modal-footer"><button class="demo-btn demo-btn-secondary" onclick="closeModal('confirmDelete')">Отмена</button><button class="demo-btn" style="background:var(--demo-red);color:#fff;border:none;" onclick="executeDelete()"><i class="fas fa-trash"></i>Подтвердить</button></div>
+        </div>
+    </div>
+
+    <!-- Powered by -->
+    <div class="powered-by">
+        <svg viewBox="0 0 44 44" fill="none"><defs><linearGradient id="logoGrad2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#38bdf8"/><stop offset="100%" style="stop-color:#0284c7"/></linearGradient></defs><path d="M35 20c0-7.18-5.82-13-13-13-6.075 0-11.182 4.165-12.62 9.8C5.52 17.45 2 21.37 2 26c0 5.523 4.477 10 10 10h22c4.418 0 8-3.582 8-8 0-3.866-2.74-7.086-6.387-7.822" stroke="url(#logoGrad2)" stroke-width="2" fill="none"/></svg>
+        Powered by <span>Cloudplus</span>
+    </div>
+
+    <script>
+        // Data
+        const requestsData = [
+            { id: '#ZK-0124', client: 'MegaStore', contact: '+998 71 345 67 89', product: 'Кофе Arabica 1кг × 20, Сироп ванильный × 5', address: 'ТЦ Мега, зона C', date: '2026-06-10', status: 'Новый', statusClass: 'blue' },
+            { id: '#ZK-0123', client: 'ООО "Технопарк"', contact: '+998 71 234 56 78', product: 'Молоко 3.2% × 50 шт', address: 'ул. Навои, 42', date: '2026-06-10', status: 'На согласовании', statusClass: 'orange' },
+            { id: '#ZK-0122', client: 'IP Каримов', contact: '+998 93 456 78 90', product: 'Чай Sencha 500г × 10', address: 'Мирзо Улугбек, 15', date: '2026-06-09', status: 'Подтверждён', statusClass: 'green' },
+            { id: '#ZK-0121', client: 'Ресторан "Плов"', contact: '+998 90 876 54 32', product: 'Зерновой кофе Blend × 8 кг', address: 'Яккасарай, 8', date: '2026-06-09', status: 'В обработке', statusClass: 'blue' },
+            { id: '#ZK-0120', client: 'Аптека "Здоровье"', contact: '+998 71 555 00 11', product: 'Упаковочный материал 200 шт', address: 'Сергели, 5', date: '2026-06-08', status: 'Отменён', statusClass: 'red' },
+            { id: '#ZK-0119', client: 'ООО "ГлобалТрейд"', contact: '+998 71 777 33 22', product: 'Сахар 50кг × 3, Мука в/с 25кг × 5', address: 'Шайхантахур, 22', date: '2026-06-08', status: 'Подтверждён', statusClass: 'green' },
+        ];
+
+        const ordersData = [
+            { id: '#TX-2847', client: 'ООО "Технопарк"', phone: '+998 71 234 56 78', from: 'Склад-1', to: 'ул. Навои, 42', driver: 'Азиз Р.', weight: '120 кг / 8 мест', eta: '14:30', status: 'В пути', statusClass: 'blue', date: '2026-06-10', history: [{time:'09:15',text:'Заказ создан'},{time:'10:00',text:'Водитель назначен — Азиз Р.'},{time:'11:30',text:'Выехал со склада'}] },
+            { id: '#TX-2846', client: 'Саидов Алишер', phone: '+998 90 123 45 67', from: 'Склад-2', to: 'Чиланзар, 9 кв', driver: 'Бахром К.', weight: '15 кг / 2 места', eta: '13:10', status: 'Доставлен', statusClass: 'green', date: '2026-06-10', history: [{time:'08:30',text:'Заказ создан'},{time:'09:00',text:'Водитель назначен — Бахром К.'},{time:'10:20',text:'Выехал со склада'},{time:'13:10',text:'Доставлен клиенту'}] },
+            { id: '#TX-2845', client: 'MegaStore', phone: '+998 71 345 67 89', from: 'Юнусабад', to: 'ТЦ Мега, зона C', driver: '—', weight: '340 кг / 24 места', eta: '—', status: 'Ожидает', statusClass: 'orange', date: '2026-06-10', history: [{time:'11:45',text:'Заказ создан'},{time:'11:45',text:'Ожидает назначения водителя'}] },
+            { id: '#TX-2844', client: 'IP Каримов', phone: '+998 93 456 78 90', from: 'Склад-1', to: 'Мирзо Улугбек, 15', driver: 'Сардор М.', weight: '60 кг / 4 места', eta: '15:00', status: 'В пути', statusClass: 'blue', date: '2026-06-10', history: [{time:'10:30',text:'Заказ создан'},{time:'11:00',text:'Водитель назначен — Сардор М.'},{time:'12:45',text:'Выехал со склада'}] },
+            { id: '#TX-2843', client: 'ООО "ГлобалТрейд"', phone: '+998 71 777 33 22', from: 'Склад-3', to: 'Шайхантахур, 22', driver: 'Дилшод Р.', weight: '280 кг / 12 мест', eta: '12:00', status: 'Доставлен', statusClass: 'green', date: '2026-06-09', history: [{time:'07:00',text:'Заказ создан'},{time:'08:00',text:'Водитель назначен'},{time:'09:30',text:'Выехал со склада'},{time:'12:00',text:'Доставлен клиенту'}] },
+            { id: '#TX-2842', client: 'Ресторан "Плов"', phone: '+998 90 876 54 32', from: 'Склад-2', to: 'Яккасарай, 8', driver: 'Жавлон А.', weight: '90 кг / 6 мест', eta: '11:30', status: 'Доставлен', statusClass: 'green', date: '2026-06-09', history: [{time:'07:30',text:'Заказ создан'},{time:'08:15',text:'Водитель назначен'},{time:'09:00',text:'Выехал со склада'},{time:'11:30',text:'Доставлен клиенту'}] },
+            { id: '#TX-2841', client: 'Аптека "Здоровье"', phone: '+998 71 555 00 11', from: 'Склад-1', to: 'Сергели, 5', driver: 'Азиз Р.', weight: '45 кг / 3 места', eta: '—', status: 'Отменён', statusClass: 'red', date: '2026-06-08', history: [{time:'14:00',text:'Заказ создан'},{time:'16:30',text:'Отменён клиентом'}] },
+        ];
+
+        const driversData = [
+            { initials: 'АР', name: 'Азиз Рахимов', status: 'online', statusText: 'На маршруте', deliveries: 127, rating: 4.9, ontime: 98, shifts: 22, trips: 127, plate: '01 A 777 BC', currentOrder: '#TX-2847 → Навои, 42' },
+            { initials: 'БК', name: 'Бахром Касымов', status: 'online', statusText: 'Свободен', deliveries: 98, rating: 4.7, ontime: 95, shifts: 20, trips: 98, plate: '01 B 888 CD', currentOrder: 'Готов к заказу' },
+            { initials: 'СМ', name: 'Сардор Мирзаев', status: 'online', statusText: 'На маршруте', deliveries: 156, rating: 4.8, ontime: 97, shifts: 24, trips: 156, plate: '01 C 999 EF', currentOrder: '#TX-2844 → Мирзо Улугбек' },
+            { initials: 'ДР', name: 'Дилшод Рустамов', status: 'online', statusText: 'На маршруте', deliveries: 89, rating: 4.6, ontime: 92, shifts: 18, trips: 89, plate: '01 D 111 GH', currentOrder: '#TX-2843 → Шайхантахур' },
+            { initials: 'ЖА', name: 'Жавлон Азимов', status: 'offline', statusText: 'Оффлайн', deliveries: 112, rating: 4.5, ontime: 90, shifts: 21, trips: 112, plate: '01 E 222 IJ', currentOrder: 'Последняя: 2ч назад' },
+            { initials: 'ФШ', name: 'Фаррух Шарипов', status: 'online', statusText: 'Свободен', deliveries: 67, rating: 4.9, ontime: 99, shifts: 15, trips: 67, plate: '01 F 333 KL', currentOrder: 'Готов к заказу' },
+        ];
+
+        let activeFilters = {};
+        let fromDashboard = false;
+        let driverStatusFilterActive = false;
+
+        // Effects configuration
+        const effectsConfig = {
+            actionButtons: 'pulse',   // 'pulse' | 'fade'
+            modalOpen:     'slide',   // 'slide' | 'fade'
+            modalClose:    'thanos',  // 'thanos' | 'fade'
+            pageTransition: 'reveal'  // 'reveal' | 'fade'
+        };
+
+        function setEffect(param, val) {
+            effectsConfig[param] = val;
+            const demoApp = document.querySelector('.demo-app');
+            if (param === 'actionButtons') {
+                demoApp.classList.toggle('fx-btn-fade', val === 'fade');
+            }
+            if (param === 'modalOpen') {
+                demoApp.classList.toggle('fx-modal-open-fade', val === 'fade');
+                demoApp.classList.toggle('fx-modal-from-btn', val === 'fromBtn');
+            }
+        }
+
+        const pageTitles = { dashboard: 'Дашборд', requests: 'Заказы', orders: 'Доставки', drivers: 'Водители', map: 'Карта', warehouse: 'Склад', clients: 'Клиенты', analytics: 'Аналитика', settings: 'Настройки' };
+
+        function showPage(pageId, resetFilters = true, e = null) {
+            if (resetFilters && fromDashboard) {
+                clearAllFilters();
+                fromDashboard = false;
+            }
+
+            document.querySelectorAll('.demo-nav-item').forEach(item => item.classList.toggle('active', item.dataset.nav === pageId));
+            document.querySelectorAll('.tech-nav-btn').forEach(item => item.classList.toggle('active', item.dataset.tnav === pageId));
+            document.getElementById('currentPageTitle').textContent = pageTitles[pageId] || pageId;
+
+            if (pageId === 'requests') renderRequests();
+            if (pageId === 'orders') renderOrders();
+            if (pageId === 'drivers') renderDrivers();
+
+            const isTech = document.querySelector('.demo-app').classList.contains('theme-tech');
+            const currentActive = document.querySelector('.demo-page-content.active');
+            const nextPage = document.getElementById('page-' + pageId);
+
+            if (!nextPage) { closeNav(); return; }
+
+            // Ripple effect on clicked element (tech-nav-btn or stat-card or demo-nav-item)
+            if (isTech && e) {
+                const rippleTarget = (e.target && (e.target.closest('.tech-nav-btn') || e.target.closest('.stat-card') || e.target.closest('.demo-nav-item')));
+                if (rippleTarget) {
+                    const br = rippleTarget.getBoundingClientRect();
+                    const rx = ((e.clientX || br.left + br.width / 2) - br.left - 8);
+                    const ry = ((e.clientY || br.top + br.height / 2) - br.top - 8);
+                    const ripple = document.createElement('span');
+                    ripple.style.cssText = `position:absolute;border-radius:50%;background:rgba(0,176,216,0.55);width:16px;height:16px;left:${rx}px;top:${ry}px;transform:scale(0);pointer-events:none;animation:navBtnRipple 0.9s ease-out forwards;`;
+                    const wasPos = getComputedStyle(rippleTarget).position;
+                    if (wasPos === 'static') rippleTarget.style.position = 'relative';
+                    rippleTarget.style.overflow = 'hidden';
+                    rippleTarget.appendChild(ripple);
+                    setTimeout(() => ripple.remove(), 950);
+                }
+            }
+
+            // Compute reveal origin relative to .demo-page (the actual clip-path container)
+            let ox = '50%', oy = '50%';
+            if (isTech && e && e.clientX !== undefined) {
+                const container = document.querySelector('.demo-page') || document.querySelector('.preview-frame');
+                if (container) {
+                    const cr = container.getBoundingClientRect();
+                    ox = (((e.clientX - cr.left) / cr.width) * 100).toFixed(1) + '%';
+                    oy = (((e.clientY - cr.top) / cr.height) * 100).toFixed(1) + '%';
+                }
+            }
+
+            const useFade = effectsConfig.pageTransition === 'fade';
+
+            if (useFade) {
+                if (currentActive && currentActive !== nextPage) {
+                    currentActive.style.animation = 'fadePageOut 0.28s ease-in forwards';
+                    setTimeout(() => {
+                        currentActive.classList.remove('active');
+                        currentActive.style.animation = '';
+                        nextPage.classList.add('active');
+                        nextPage.style.animation = 'fadePageIn 0.4s ease-out forwards';
+                        setTimeout(() => { nextPage.style.animation = ''; }, 420);
+                    }, 280);
+                } else {
+                    document.querySelectorAll('.demo-page-content').forEach(p => p.classList.remove('active'));
+                    nextPage.classList.add('active');
+                    nextPage.style.animation = 'fadePageIn 0.4s ease-out forwards';
+                    setTimeout(() => { nextPage.style.animation = ''; }, 420);
+                }
+            } else if (isTech && currentActive && currentActive !== nextPage) {
+                currentActive.style.animation = 'techPageOut 0.18s ease-in forwards';
+                setTimeout(() => {
+                    currentActive.classList.remove('active');
+                    currentActive.style.animation = '';
+                    nextPage.style.setProperty('--reveal-x', ox);
+                    nextPage.style.setProperty('--reveal-y', oy);
+                    nextPage.classList.add('active');
+                    nextPage.style.animation = 'techPageReveal 0.48s cubic-bezier(0.22, 1, 0.36, 1) forwards';
+                    setTimeout(() => { nextPage.style.animation = ''; nextPage.style.clipPath = ''; }, 500);
+                }, 180);
+            } else {
+                document.querySelectorAll('.demo-page-content').forEach(p => p.classList.remove('active'));
+                nextPage.style.setProperty('--reveal-x', ox);
+                nextPage.style.setProperty('--reveal-y', oy);
+                nextPage.classList.add('active');
+                if (isTech) {
+                    nextPage.style.animation = 'techPageReveal 0.48s cubic-bezier(0.22, 1, 0.36, 1) forwards';
+                    setTimeout(() => { nextPage.style.animation = ''; nextPage.style.clipPath = ''; }, 500);
+                } else {
+                    nextPage.style.animation = 'minPageIn 0.2s ease-out forwards';
+                    setTimeout(() => { nextPage.style.animation = ''; }, 210);
+                }
+            }
+
+            closeNav();
+        }
+
+        function goToOrdersToday(e) {
+            fromDashboard = true;
+            activeFilters = { date: ['2026-06-10'] };
+            showPage('orders', false, e);
+        }
+
+        function goToMap(e) {
+            showPage('map', true, e);
+        }
+
+        function goToDriversOnShift(e) {
+            fromDashboard = true;
+            driverStatusFilterActive = true;
+            showPage('drivers', false, e);
+        }
+
+        function renderRequests() {
+            const tbody = document.getElementById('requestsTableBody');
+            tbody.innerHTML = requestsData.map((r, idx) => `
+                <tr id="req-row-${r.id.replace('#','').replace('-','')}">
+                    <td class="table-id">${r.id}</td>
+                    <td>${r.client}</td>
+                    <td style="max-width:180px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${r.product}</td>
+                    <td>${r.address}</td>
+                    <td>${r.date}</td>
+                    <td><span class="table-status ${r.statusClass}">${r.status}</span></td>
+                    <td><div class="table-actions">
+                        <button class="table-action" title="Просмотр" onclick="openModal('newRequest', event)"><i class="fas fa-eye"></i></button>
+                        ${r.status !== 'Отменён' && r.status !== 'В обработке' ? `<button class="table-action" title="Оформить доставку" style="color: var(--demo-green);" onclick="openConvertModal(${idx})"><i class="fas fa-truck"></i></button>` : ''}
+                        ${r.status !== 'Отменён' ? `<button class="table-action" title="Отменить" style="color: var(--demo-red);" onclick="cancelRequest(${idx});event.stopPropagation()"><i class="fas fa-times"></i></button>` : ''}
+                    </div></td>
+                </tr>
+            `).join('');
+            document.getElementById('requestsSubtitle').textContent = requestsData.length + ' заявок';
+        }
+
+        function openConvertModal(idx) {
+            const r = requestsData[idx];
+            document.getElementById('convertModalTitle').textContent = 'Оформить доставку — ' + r.id;
+            document.getElementById('convertRequestInfo').textContent = r.id + ' · ' + r.client + ' → ' + r.address;
+            document.getElementById('convertIdx').value = idx;
+            openModal('convertRequest');
+        }
+
+        function confirmConvert() {
+            const idx = parseInt(document.getElementById('convertIdx').value);
+            const r = requestsData[idx];
+            requestsData[idx].status = 'В обработке';
+            requestsData[idx].statusClass = 'blue';
+            closeModal('convertRequest');
+            showPage('orders');
+            setTimeout(() => {
+                document.getElementById('newOrderTitle').textContent = 'Доставка из заявки ' + r.id;
+                document.getElementById('newOrderClient').value = r.client;
+                document.getElementById('newOrderAddress').value = r.address;
+                openModal('newOrder');
+            }, 980);
+        }
+
+        function openNotification(section, entityId, e) {
+            toggleNotifications();
+            if (section === 'requests') {
+                showPage('requests', true, e);
+                setTimeout(() => {
+                    const rowId = 'req-row-' + entityId.replace('-', '');
+                    const row = document.getElementById(rowId);
+                    if (row) { row.classList.add('row-highlighted'); setTimeout(() => row.classList.remove('row-highlighted'), 2500); }
+                }, 100);
+            } else if (section === 'orders') {
+                showPage('orders', true, e);
+                setTimeout(() => {
+                    const rows = document.querySelectorAll('#ordersTableBody tr');
+                    rows.forEach(row => {
+                        if (row.querySelector('.table-id') && row.querySelector('.table-id').textContent.includes(entityId)) {
+                            row.classList.add('row-highlighted');
+                            setTimeout(() => row.classList.remove('row-highlighted'), 2500);
+                        }
+                    });
+                }, 150);
+            } else if (section === 'drivers') {
+                showPage('drivers', true, e);
+                setTimeout(() => {
+                    const cards = document.querySelectorAll('#driversGrid .profile-card');
+                    cards.forEach(card => {
+                        if (card.querySelector('.profile-avatar') && card.querySelector('.profile-avatar').textContent === entityId) {
+                            card.classList.add('card-highlighted');
+                            setTimeout(() => card.classList.remove('card-highlighted'), 2500);
+                        }
+                    });
+                }, 150);
+            }
+        }
+
+        function renderOrders() {
+            const tbody = document.getElementById('ordersTableBody');
+            let filtered = ordersData;
+
+            Object.keys(activeFilters).forEach(key => {
+                if (activeFilters[key].length > 0) {
+                    if (key === 'date') {
+                        filtered = filtered.filter(o => activeFilters[key].includes(o.date));
+                    } else if (key === 'status') {
+                        filtered = filtered.filter(o => activeFilters[key].includes(o.status));
+                    } else if (key === 'driver') {
+                        filtered = filtered.filter(o => activeFilters[key].includes(o.driver));
+                    } else if (key === 'client') {
+                        filtered = filtered.filter(o => activeFilters[key].includes(o.client));
+                    } else if (key === 'from') {
+                        filtered = filtered.filter(o => activeFilters[key].includes(o.from));
+                    }
+                }
+            });
+
+            tbody.innerHTML = filtered.map((o, fi) => {
+                const realIdx = ordersData.indexOf(o);
+                return `
+                <tr id="order-row-${o.id.replace('#','')}">
+                    <td class="table-id">${o.id}</td>
+                    <td>${o.client}<br><span style="font-size:9px;color:var(--demo-text-muted);">${o.phone}</span></td>
+                    <td>${o.from}</td>
+                    <td>${o.to}</td>
+                    <td>${o.driver}</td>
+                    <td><span class="table-status ${o.statusClass}">${o.status}</span></td>
+                    <td style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--demo-cyan);">${o.eta}</td>
+                    <td><div class="table-actions">
+                        <button class="table-action" title="Просмотр" onclick="openOrderDetail(${realIdx})"><i class="fas fa-eye"></i></button>
+                        ${o.status !== 'Отменён' && o.status !== 'Доставлен' ? `<button class="table-action" title="Редактировать" onclick="openEditOrder(${realIdx})"><i class="fas fa-edit"></i></button>` : ''}
+                        ${o.status !== 'Отменён' && o.status !== 'Доставлен' ? `<button class="table-action" title="Отменить" style="color:var(--demo-red);" onclick="cancelOrder(${realIdx})"><i class="fas fa-ban"></i></button>` : ''}
+                    </div></td>
+                </tr>`;
+            }).join('');
+
+            document.getElementById('ordersSubtitle').textContent = `${filtered.length} заказов`;
+            updateFilterTags();
+        }
+
+        function renderDrivers() {
+            const grid = document.getElementById('driversGrid');
+            let filtered = driversData;
+
+            if (driverStatusFilterActive) {
+                filtered = filtered.filter(d => d.status === 'online');
+            }
+
+            grid.innerHTML = filtered.map(d => `
+                <div class="profile-card">
+                    <div class="profile-header">
+                        <div class="profile-avatar">${d.initials}</div>
+                        <div class="profile-info">
+                            <h4>${d.name}</h4>
+                            <div class="profile-status ${d.status}"><i class="fas fa-circle"></i>${d.statusText}</div>
+                        </div>
+                    </div>
+                    <div class="profile-stats">
+                        <div class="profile-stat"><div class="profile-stat-value">${d.shifts}</div><div class="profile-stat-label">Смен</div></div>
+                        <div class="profile-stat"><div class="profile-stat-value">${d.trips}</div><div class="profile-stat-label">Выездов</div></div>
+                        <div class="profile-stat"><div class="profile-stat-value">${d.plate.split(' ').pop()}</div><div class="profile-stat-label">Номер</div></div>
+                    </div>
+                    <div class="profile-current"><div class="profile-current-label">Текущее</div><div class="profile-current-text">${d.currentOrder}</div></div>
+                </div>
+            `).join('');
+
+            document.getElementById('driversSubtitle').textContent = `${filtered.length} водителей`;
+            document.getElementById('driverStatusFilter').classList.toggle('active', driverStatusFilterActive);
+            document.getElementById('clearDriversFilters').style.display = driverStatusFilterActive ? 'flex' : 'none';
+        }
+
+        function toggleFilter(th, column) {
+            // Simple toggle for now
+            if (!activeFilters[column]) activeFilters[column] = [];
+            
+            const uniqueValues = [...new Set(ordersData.map(o => o[column]))];
+            
+            const existing = th.querySelector('.filter-dropdown');
+            if (existing) {
+                existing.remove();
+                return;
+            }
+
+            document.querySelectorAll('.filter-dropdown').forEach(d => d.remove());
+
+            const dropdown = document.createElement('div');
+            dropdown.className = 'filter-dropdown active';
+            dropdown.innerHTML = `
+                <input type="text" class="filter-search" placeholder="Поиск..." oninput="filterDropdownOptions(this)">
+                <div class="filter-options">
+                    ${uniqueValues.map(v => `
+                        <div class="filter-option ${activeFilters[column].includes(v) ? 'selected' : ''}" onclick="toggleFilterValue('${column}', '${v}', this)">
+                            <div class="filter-checkbox"><i class="fas fa-check"></i></div>
+                            <span>${v}</span>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            th.style.position = 'relative';
+            th.appendChild(dropdown);
+
+            setTimeout(() => {
+                document.addEventListener('click', function closeDropdown(e) {
+                    if (!dropdown.contains(e.target) && e.target !== th) {
+                        dropdown.remove();
+                        document.removeEventListener('click', closeDropdown);
+                    }
+                });
+            }, 0);
+        }
+
+        function toggleFilterValue(column, value, el) {
+            if (!activeFilters[column]) activeFilters[column] = [];
+            
+            const idx = activeFilters[column].indexOf(value);
+            if (idx > -1) {
+                activeFilters[column].splice(idx, 1);
+                el.classList.remove('selected');
+            } else {
+                activeFilters[column].push(value);
+                el.classList.add('selected');
+            }
+            renderOrders();
+        }
+
+        function filterDropdownOptions(input) {
+            const search = input.value.toLowerCase();
+            const options = input.parentElement.querySelectorAll('.filter-option');
+            options.forEach(opt => {
+                const text = opt.querySelector('span').textContent.toLowerCase();
+                opt.style.display = text.includes(search) ? 'flex' : 'none';
+            });
+        }
+
+        function updateFilterTags() {
+            const container = document.getElementById('activeFilterTags');
+            const hasFilters = Object.values(activeFilters).some(arr => arr.length > 0);
+            
+            document.getElementById('clearFiltersBtn').style.display = hasFilters ? 'flex' : 'none';
+            
+            let html = '';
+            Object.keys(activeFilters).forEach(key => {
+                activeFilters[key].forEach(val => {
+                    html += `<div class="filter-tag">${val}<span class="filter-tag-close" onclick="removeFilter('${key}', '${val}')"><i class="fas fa-times"></i></span></div>`;
+                });
+            });
+            container.innerHTML = html;
+        }
+
+        function removeFilter(column, value) {
+            const idx = activeFilters[column].indexOf(value);
+            if (idx > -1) activeFilters[column].splice(idx, 1);
+            renderOrders();
+        }
+
+        function clearAllFilters() {
+            activeFilters = {};
+            renderOrders();
+        }
+
+        function toggleDriverStatusFilter() {
+            driverStatusFilterActive = !driverStatusFilterActive;
+            renderDrivers();
+        }
+
+        function clearDriverFilters() {
+            driverStatusFilterActive = false;
+            renderDrivers();
+        }
+
+        function toggleMapFilter(type) {
+            // Placeholder for map filters
+            document.querySelectorAll('#mapFiltersBar .filter-btn').forEach(b => b.classList.remove('active'));
+            event.target.closest('.filter-btn').classList.toggle('active');
+        }
+
+        function openOrderDetail(idx) {
+            const o = ordersData[idx];
+            document.getElementById('viewOrderTitle').textContent = 'Доставка ' + o.id;
+            const statusColors = { 'В пути': 'var(--demo-accent)', 'Доставлен': 'var(--demo-green)', 'Ожидает': 'var(--demo-orange)', 'Отменён': 'var(--demo-red)' };
+            document.getElementById('viewOrderBody').innerHTML = `
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+                    <div class="form-group" style="margin:0;"><label class="form-label">Клиент</label><div style="padding:8px;background:var(--demo-bg);border-radius:6px;font-size:11px;color:var(--demo-text);">${o.client}</div></div>
+                    <div class="form-group" style="margin:0;"><label class="form-label">Телефон</label><div style="padding:8px;background:var(--demo-bg);border-radius:6px;font-size:11px;color:var(--demo-cyan);">${o.phone}</div></div>
+                    <div class="form-group" style="margin:0;"><label class="form-label">Откуда</label><div style="padding:8px;background:var(--demo-bg);border-radius:6px;font-size:11px;color:var(--demo-text);">${o.from}</div></div>
+                    <div class="form-group" style="margin:0;"><label class="form-label">Куда</label><div style="padding:8px;background:var(--demo-bg);border-radius:6px;font-size:11px;color:var(--demo-text);">${o.to}</div></div>
+                    <div class="form-group" style="margin:0;"><label class="form-label">Водитель</label><div style="padding:8px;background:var(--demo-bg);border-radius:6px;font-size:11px;color:var(--demo-text);">${o.driver}</div></div>
+                    <div class="form-group" style="margin:0;"><label class="form-label">ETA</label><div style="padding:8px;background:var(--demo-bg);border-radius:6px;font-size:11px;color:var(--demo-cyan);font-family:'JetBrains Mono',monospace;">${o.eta}</div></div>
+                    <div class="form-group" style="margin:0;"><label class="form-label">Вес / Места</label><div style="padding:8px;background:var(--demo-bg);border-radius:6px;font-size:11px;color:var(--demo-text);">${o.weight}</div></div>
+                    <div class="form-group" style="margin:0;"><label class="form-label">Статус</label><div style="padding:8px;background:var(--demo-bg);border-radius:6px;font-size:11px;font-weight:600;color:${statusColors[o.status]||'var(--demo-text)'};">${o.status}</div></div>
+                </div>
+                <div class="form-group"><label class="form-label" style="margin-bottom:8px;">История статусов</label>
+                    <div style="border-left:2px solid var(--demo-border);margin-left:6px;">
+                        ${o.history.map(h => `<div style="display:flex;gap:10px;padding:6px 0 6px 12px;position:relative;">
+                            <div style="position:absolute;left:-5px;top:10px;width:8px;height:8px;background:var(--demo-accent);border-radius:50%;"></div>
+                            <span style="font-size:9px;color:var(--demo-text-muted);white-space:nowrap;font-family:'JetBrains Mono',monospace;">${h.time}</span>
+                            <span style="font-size:10px;color:var(--demo-text-secondary);">${h.text}</span>
+                        </div>`).join('')}
+                    </div>
+                </div>`;
+            const footer = document.getElementById('viewOrderFooter');
+            footer.innerHTML = `<button class="demo-btn demo-btn-secondary" onclick="closeModal('viewOrder')">Закрыть</button>`;
+            if (o.status === 'В пути') footer.innerHTML += `<button class="demo-btn demo-btn-primary" onclick="goToMap();closeModal('viewOrder')"><i class="fas fa-map"></i>На карте</button>`;
+            openModal('viewOrder');
+        }
+
+        function openEditOrder(idx) {
+            const o = ordersData[idx];
+            document.getElementById('editOrderTitle').textContent = 'Редактировать ' + o.id;
+            document.getElementById('editOrderIdx').value = idx;
+            document.getElementById('editOrderStatus').value = o.status;
+            document.getElementById('editOrderDriver').value = o.driver;
+            document.getElementById('editOrderEta').value = o.eta === '—' ? '' : o.eta;
+            openModal('editOrder');
+        }
+
+        function saveEditOrder() {
+            const idx = parseInt(document.getElementById('editOrderIdx').value);
+            const statusMap = { 'В пути': 'blue', 'Доставлен': 'green', 'Ожидает': 'orange', 'Отменён': 'red' };
+            const newStatus = document.getElementById('editOrderStatus').value;
+            ordersData[idx].status = newStatus;
+            ordersData[idx].statusClass = statusMap[newStatus] || 'blue';
+            ordersData[idx].driver = document.getElementById('editOrderDriver').value;
+            const eta = document.getElementById('editOrderEta').value;
+            ordersData[idx].eta = eta || '—';
+            closeModal('editOrder');
+            renderOrders();
+        }
+
+        function cancelOrder(idx) {
+            askDelete(`Отменить доставку ${ordersData[idx].id}?`, () => {
+                ordersData[idx].status = 'Отменён';
+                ordersData[idx].statusClass = 'red';
+                ordersData[idx].eta = '—';
+                ordersData[idx].history.push({time: new Date().toLocaleTimeString('ru',{hour:'2-digit',minute:'2-digit'}), text: 'Отменён оператором'});
+                renderOrders();
+            });
+        }
+
+        function openModal(id, e) {
+            const overlay = document.getElementById('modal-' + id);
+            if (!overlay) return;
+            const modal = overlay.querySelector('.modal');
+            if (effectsConfig.modalOpen === 'fromBtn' && e && modal) {
+                // Temporarily show to measure, then animate
+                overlay.style.visibility = 'hidden';
+                overlay.style.display = 'flex';
+                const mr = modal.getBoundingClientRect();
+                overlay.style.display = '';
+                overlay.style.visibility = '';
+
+                const cx = (e.clientX !== undefined ? e.clientX : null) ||
+                    (e.target ? e.target.getBoundingClientRect().left + e.target.getBoundingClientRect().width / 2 : window.innerWidth / 2);
+                const cy = (e.clientY !== undefined ? e.clientY : null) ||
+                    (e.target ? e.target.getBoundingClientRect().top + e.target.getBoundingClientRect().height / 2 : window.innerHeight / 2);
+
+                // transform-origin must be set directly on element, not inside keyframes
+                const ox = ((cx - mr.left) / mr.width * 100).toFixed(1) + '%';
+                const oy = ((cy - mr.top) / mr.height * 100).toFixed(1) + '%';
+                modal.style.transformOrigin = ox + ' ' + oy;
+                overlay.classList.add('active');
+                setTimeout(() => { modal.style.transformOrigin = ''; }, 600);
+            } else {
+                overlay.classList.add('active');
+            }
+        }
+
+        function _thanosSnapshot(element, COLS, ROWS) {
+            const rect = element.getBoundingClientRect();
+            const pw = rect.width / COLS;
+            const ph = rect.height / ROWS;
+
+            const buildPieces = (dataUrl) => {
+                const frag = document.createDocumentFragment();
+                const pieces = [];
+                for (let row = 0; row < ROWS; row++) {
+                    for (let col = 0; col < COLS; col++) {
+                        const piece = document.createElement('div');
+                        piece.style.cssText =
+                            `position:fixed;width:${(pw+1).toFixed(1)}px;height:${(ph+1).toFixed(1)}px;` +
+                            `left:${(rect.left + col * pw).toFixed(1)}px;top:${(rect.top + row * ph).toFixed(1)}px;` +
+                            `background:url(${dataUrl}) no-repeat;` +
+                            `background-size:${Math.ceil(rect.width)}px ${Math.ceil(rect.height)}px;` +
+                            `background-position:-${(col * pw).toFixed(1)}px -${(row * ph).toFixed(1)}px;` +
+                            `z-index:2002;pointer-events:none;will-change:transform;`;
+                        frag.appendChild(piece);
+                        pieces.push(piece);
+                    }
+                }
+                document.body.appendChild(frag);
+                return pieces;
+            };
+
+            const fallback = () => {
+                const c = document.createElement('canvas');
+                c.width = Math.ceil(rect.width); c.height = Math.ceil(rect.height);
+                const ctx = c.getContext('2d');
+                const grad = ctx.createLinearGradient(0, 0, c.width, c.height);
+                grad.addColorStop(0, '#0d3b6e'); grad.addColorStop(1, '#1a5296');
+                ctx.fillStyle = grad; ctx.fillRect(0, 0, c.width, c.height);
+                ctx.fillStyle = 'rgba(0,176,216,0.18)'; ctx.fillRect(0, 0, c.width, 48);
+                ctx.fillStyle = 'rgba(0,176,216,0.5)'; ctx.fillRect(0, 48, c.width, 1);
+                ctx.fillStyle = 'rgba(26,26,53,0.75)';
+                for (let i = 0; i < Math.floor(c.height / 48); i++) {
+                    ctx.fillRect(16, 64 + i * 44, c.width - 32, 28);
+                }
+                return buildPieces(c.toDataURL('image/jpeg', 0.85));
+            };
+
+            if (typeof html2canvas !== 'undefined') {
+                return html2canvas(element, {
+                    backgroundColor: null, scale: 1, useCORS: true,
+                    allowTaint: true, logging: false,
+                    scrollX: -window.scrollX, scrollY: -window.scrollY
+                }).then(canvas => buildPieces(canvas.toDataURL('image/jpeg', 0.82)))
+                  .catch(() => Promise.resolve(fallback()));
+            }
+            return Promise.resolve(fallback());
+        }
+
+        function _thanosAnimate(pieces, onDone) {
+            let done = 0;
+            pieces.forEach(piece => {
+                const delay = Math.random() * 420;
+                const dx = -(40 + Math.random() * 520);
+                const dy = 30 + Math.random() * 640;
+                const rot = (Math.random() - 0.5) * 600;
+                const dur = 200 + Math.random() * 520;
+                setTimeout(() => {
+                    piece.style.transition = `transform ${dur}ms ease-in, opacity ${(dur*0.5).toFixed(0)}ms ${(delay*0.3).toFixed(0)}ms ease-in`;
+                    piece.style.transform = `translate(${dx}px,${dy}px) rotate(${rot}deg) scale(0.01)`;
+                    piece.style.opacity = '0';
+                    setTimeout(() => {
+                        piece.remove();
+                        done++;
+                        if (done === pieces.length && onDone) onDone();
+                    }, dur + 50);
+                }, delay);
+            });
+        }
+
+        async function closeModal(id) {
+            const overlay = document.getElementById('modal-' + id);
+            if (!overlay) return;
+            const isTech = document.querySelector('.demo-app').classList.contains('theme-tech');
+
+            if (effectsConfig.modalClose === 'fade') {
+                const modal = overlay.querySelector('.modal');
+                modal.style.animation = 'fadeModalOut 0.5s ease-in forwards';
+                overlay.style.transition = 'background 0.45s ease';
+                overlay.style.background = 'rgba(0,0,0,0)';
+                setTimeout(() => {
+                    modal.style.animation = '';
+                    overlay.style.background = '';
+                    overlay.style.transition = '';
+                    overlay.classList.remove('active');
+                }, 500);
+            } else if (isTech) {
+                const modal = overlay.querySelector('.modal');
+                overlay.style.transition = 'background 0.08s';
+                overlay.style.background = 'rgba(0,0,0,0)';
+                const pieces = await _thanosSnapshot(modal, 40, 25);
+                modal.style.visibility = 'hidden';
+                _thanosAnimate(pieces, () => {
+                    modal.style.visibility = '';
+                    overlay.style.background = '';
+                    overlay.classList.remove('active');
+                });
+            } else {
+                overlay.classList.add('closing');
+                setTimeout(() => overlay.classList.remove('active', 'closing'), 260);
+            }
+        }
+
+        async function toggleNotifications() {
+            const panel = document.getElementById('notificationsPanel');
+            const isTech = document.querySelector('.demo-app').classList.contains('theme-tech');
+            const isOpen = panel.classList.contains('active');
+            if (isOpen) {
+                if (effectsConfig.modalClose === 'fade') {
+                    panel.style.transition = 'right 0.3s ease, opacity 0.45s ease';
+                    panel.style.opacity = '0';
+                    setTimeout(() => {
+                        panel.classList.remove('active');
+                        panel.style.opacity = '';
+                        panel.style.transition = '';
+                    }, 450);
+                } else if (isTech) {
+                    const pieces = await _thanosSnapshot(panel, 20, 25);
+                    panel.classList.remove('active');
+                    _thanosAnimate(pieces, null);
+                } else {
+                    panel.classList.remove('active');
+                }
+            } else {
+                panel.classList.add('active');
+            }
+        }
+
+        function cancelRequest(idx) {
+            askDelete(`Отменить заявку ${requestsData[idx].id}?`, () => {
+                requestsData[idx].status = 'Отменён';
+                requestsData[idx].statusClass = 'red';
+                renderRequests();
+            });
+        }
+
+        let _deleteCallback = null;
+
+        function askDelete(message, callback) {
+            _deleteCallback = callback;
+            document.getElementById('confirmDeleteText').textContent = message;
+            openModal('confirmDelete');
+        }
+
+        function executeDelete() {
+            const cb = _deleteCallback;
+            _deleteCallback = null;
+            closeModal('confirmDelete');
+            if (cb) setTimeout(cb, 950);
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key !== 'Escape') return;
+            document.querySelectorAll('.modal-overlay.active').forEach(m => {
+                const id = m.id.replace('modal-', '');
+                closeModal(id);
+            });
+            const notif = document.getElementById('notificationsPanel');
+            if (notif && notif.classList.contains('active')) toggleNotifications();
+            closeNav();
+        });
+
+        // Builder controls
+        document.querySelectorAll('.toggle-item[data-section]').forEach(item => {
+            item.addEventListener('click', () => {
+                item.classList.toggle('active');
+                const navItem = document.querySelector(`.demo-nav-item[data-nav="${item.dataset.section}"]`);
+                if (navItem) navItem.style.display = item.classList.contains('active') ? 'flex' : 'none';
+            });
+        });
+
+        document.querySelectorAll('.toggle-item[data-feature]').forEach(item => {
+            item.addEventListener('click', () => item.classList.toggle('active'));
+        });
+
+        // Effects controls
+        document.querySelectorAll('.effect-opt').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const param = btn.dataset.effect;
+                const val = btn.dataset.val;
+                document.querySelectorAll(`.effect-opt[data-effect="${param}"]`).forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+                setEffect(param, val);
+            });
+        });
+
+        const THEMES = {
+            tech: {
+                '--demo-sidebar': '#0d3b6e',
+                '--demo-sidebar-hover': '#1a5296',
+                '--demo-menu-active': '#1a5296',
+                '--demo-bg': '#e8f4fd',
+                '--demo-card': '#ffffff',
+                '--demo-card-hover': '#f0f9ff',
+                '--demo-border': '#b3d9f0',
+                '--demo-text': '#0d2137',
+                '--demo-text-secondary': '#2a5f80',
+                '--demo-text-muted': '#5a8fa8',
+                '--demo-accent': '#00b0d8',
+                '--demo-accent-light': 'rgba(0, 176, 216, 0.12)',
+                '--demo-cyan': '#0288d1',
+                '--demo-green': '#10b981',
+                '--demo-green-light': 'rgba(16, 185, 129, 0.15)',
+                '--demo-orange': '#f59e0b',
+                '--demo-orange-light': 'rgba(245, 158, 11, 0.15)',
+                '--demo-red': '#ef4444',
+                '--demo-red-light': 'rgba(239, 68, 68, 0.15)',
+                '--demo-glow': '0 0 20px rgba(0, 176, 216, 0.3)',
+            },
+            minimal: {
+                '--demo-sidebar': '#ffffff',
+                '--demo-sidebar-hover': '#f1f5f9',
+                '--demo-menu-active': '#eff6ff',
+                '--demo-bg': '#f8fafc',
+                '--demo-card': '#ffffff',
+                '--demo-card-hover': '#f8fafc',
+                '--demo-border': '#e2e8f0',
+                '--demo-text': '#1e293b',
+                '--demo-text-secondary': '#475569',
+                '--demo-text-muted': '#94a3b8',
+                '--demo-accent': '#2563eb',
+                '--demo-accent-light': 'rgba(37, 99, 235, 0.1)',
+                '--demo-cyan': '#0284c7',
+                '--demo-green': '#16a34a',
+                '--demo-green-light': 'rgba(22, 163, 74, 0.1)',
+                '--demo-orange': '#d97706',
+                '--demo-orange-light': 'rgba(217, 119, 6, 0.1)',
+                '--demo-red': '#dc2626',
+                '--demo-red-light': 'rgba(220, 38, 38, 0.1)',
+                '--demo-glow': '0 1px 4px rgba(0,0,0,0.06)',
+            },
+            energy: {
+                '--demo-sidebar': '#1e0a00',
+                '--demo-sidebar-hover': '#2e1200',
+                '--demo-menu-active': 'rgba(249,115,22,0.25)',
+                '--demo-bg': '#fef9f0',
+                '--demo-card': '#ffffff',
+                '--demo-card-hover': '#fff8f0',
+                '--demo-border': 'rgba(249,115,22,0.15)',
+                '--demo-text': '#1c0500',
+                '--demo-text-secondary': '#92400e',
+                '--demo-text-muted': '#b45309',
+                '--demo-accent': '#f97316',
+                '--demo-accent-light': 'rgba(249, 115, 22, 0.12)',
+                '--demo-cyan': '#2ec4b6',
+                '--demo-green': '#2ec4b6',
+                '--demo-green-light': 'rgba(46, 196, 182, 0.12)',
+                '--demo-orange': '#f97316',
+                '--demo-orange-light': 'rgba(249, 115, 22, 0.12)',
+                '--demo-red': '#ef4444',
+                '--demo-red-light': 'rgba(239, 68, 68, 0.12)',
+                '--demo-glow': '0 4px 20px rgba(249, 115, 22, 0.2)',
+            }
+        };
+
+        function applyTheme(themeName) {
+            const theme = THEMES[themeName];
+            if (!theme) return;
+
+            // CSS variables
+            const root = document.documentElement;
+            Object.entries(theme).forEach(([key, val]) => root.style.setProperty(key, val));
+
+            // Theme class on demo-app
+            const demoApp = document.querySelector('.demo-app');
+            demoApp.classList.remove('theme-tech', 'theme-minimal', 'theme-energy');
+            demoApp.classList.add('theme-' + themeName);
+
+            // Reset sidebar state when switching
+            closeNav();
+        }
+
+        function toggleNav() {
+            const isTech = document.querySelector('.demo-app').classList.contains('theme-tech');
+            if (isTech) {
+                const overlay = document.getElementById('techNavOverlay');
+                if (overlay) overlay.classList.toggle('open');
+            } else {
+                const sidebar = document.getElementById('demoSidebar');
+                const backdrop = document.getElementById('navBackdrop');
+                if (sidebar && backdrop) {
+                    const isOpen = sidebar.classList.contains('open');
+                    sidebar.classList.toggle('open', !isOpen);
+                    backdrop.classList.toggle('active', !isOpen);
+                }
+            }
+        }
+
+        function closeNav() {
+            const overlay = document.getElementById('techNavOverlay');
+            if (overlay) overlay.classList.remove('open');
+            const sidebar = document.getElementById('demoSidebar');
+            const backdrop = document.getElementById('navBackdrop');
+            if (sidebar) sidebar.classList.remove('open');
+            if (backdrop) backdrop.classList.remove('active');
+        }
+
+        document.querySelectorAll('.style-card').forEach(card => {
+            card.addEventListener('click', () => {
+                document.querySelectorAll('.style-card').forEach(c => c.classList.remove('selected'));
+                card.classList.add('selected');
+                applyTheme(card.dataset.style);
+            });
+        });
+
+        function openClientView() {
+            const config = { sections: [], features: [], effects: { ...effectsConfig } };
+            document.querySelectorAll('.toggle-item.active[data-section]').forEach(item => config.sections.push(item.dataset.section));
+            document.querySelectorAll('.toggle-item.active[data-feature]').forEach(item => config.features.push(item.dataset.feature));
+            const url = window.location.href.split('?')[0] + '?mode=client&config=' + btoa(JSON.stringify(config));
+            window.open(url, '_blank');
+        }
+
+        // URL params
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('mode') === 'client') {
+            document.getElementById('app').classList.add('client-mode');
+            document.querySelector('.powered-by').style.display = 'none';
+            const configStr = params.get('config');
+            if (configStr) {
+                try {
+                    const config = JSON.parse(atob(configStr));
+                    document.querySelectorAll('.demo-nav-item').forEach(item => {
+                        if (!config.sections.includes(item.dataset.nav)) item.style.display = 'none';
+                    });
+                    if (config.effects) {
+                        Object.keys(config.effects).forEach(k => setEffect(k, config.effects[k]));
+                    }
+                } catch(e) {}
+            }
+        }
+
+        // Init
+        renderRequests();
+        renderOrders();
+        renderDrivers();
+
+        // Map animation
+        setInterval(() => {
+            document.querySelectorAll('.map-vehicle').forEach(v => {
+                const l = parseFloat(v.style.left), t = parseFloat(v.style.top);
+                v.style.left = Math.max(15, Math.min(85, l + (Math.random() - 0.5) * 0.6)) + '%';
+                v.style.top = Math.max(15, Math.min(85, t + (Math.random() - 0.5) * 0.6)) + '%';
+            });
+        }, 2000);
+    </script>
+</body>
+</html>
